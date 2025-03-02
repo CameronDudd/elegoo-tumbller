@@ -18,10 +18,11 @@ if(CMAKE_VERSION VERSION_LESS "3.7.0")
 endif()
 
 include_directories(/usr/avr/include)
+include_directories(${CMAKE_SOURCE_DIR/src})
 
 set(TARGET_NAME main)
 
-add_executable(${TARGET_NAME}.elf src/main.cpp)
+add_executable(${TARGET_NAME}.elf src/main.cpp src/motor.cpp)
 
 target_include_directories(${TARGET_NAME}.elf PRIVATE /usr/avr/include)
 
