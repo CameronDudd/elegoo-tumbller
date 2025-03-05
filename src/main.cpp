@@ -10,26 +10,35 @@
 #include "motor.hpp"
 #include "serial.hpp"
 
-extern volatile unsigned long leftWheelPulses;
+extern volatile unsigned long leftWheelSpeed;
+extern volatile unsigned long rightWheelSpeed;
 
 char outputBuff[200] = {};
 
 int main() {
-  initInterrupts();
+  initEncoders();
+  initSpeedTimer();
 
   Serial serial = Serial();
   MotorController motorController = MotorController();
-  motorController.enableMotors();
+
+  // motorController.enableMotors();
+  // motorController.setSpeed(255);  2550
+  // motorController.setSpeed(200);  2000
+  // motorController.setSpeed(175);  1730
+  // motorController.setSpeed(150);  1470
+  // motorController.setSpeed(125);  1220
+  // motorController.setSpeed(100);   960
+  // motorController.setSpeed(75);    700
 
   while (1) {
-    sprintf(outputBuff, "%lu\n", leftWheelPulses);
+    sprintf(outputBuff, "Left-Speed:%lu pulses/s Right-Speed:%lu pulses/s\r\n", leftWheelSpeed, rightWheelSpeed);
     serial.uart_print(outputBuff);
 
-    motorController.setSpeed(128);
-    _delay_ms(1000);
+    // _delay_ms(1000);
 
-    motorController.setSpeed(0);
-    _delay_ms(1000);
+    // motorController.setSpeed(0);
+    // _delay_ms(1000);
 
     // motorController.setSpeed(255);
     // _delay_ms(1000);

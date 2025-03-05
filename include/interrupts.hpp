@@ -6,6 +6,7 @@
 #ifndef INTERUPTS_H
 #define INTERUPTS_H
 
-void initInterrupts();
+void initEncoders();
+void initSpeedTimer();
 
 #endif  // INTERUPTS_H

@@ -11,8 +11,8 @@
 
 static void _initPWM() {
   /*
-   * OCR0A Output compare register A
-   * OCR0B Output compare register B
+   * OCR0A Output compare register 0A
+   * OCR0B Output compare register 0B
    */
   TCCR0A = 0;
   TCCR0B = 0;
