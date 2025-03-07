@@ -4,3 +4,6 @@
 [submodule "lib/cmock"]
 	path = lib/cmock
 	url = https://github.com/ThrowTheSwitch/CMock.git
+[submodule "lib/avr-libc"]
+	path = lib/avr-libc
+	url = https://github.com/avrdudes/avr-libc
