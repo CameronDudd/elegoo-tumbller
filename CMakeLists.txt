@@ -22,7 +22,7 @@ include_directories(${CMAKE_SOURCE_DIR}/include)
 
 set(TARGET_NAME main)
 
-add_executable(${TARGET_NAME}.elf src/main.cpp src/motor.cpp src/interrupts.cpp src/serial.cpp)
+add_executable(${TARGET_NAME}.elf src/main.cpp src/motor.cpp src/interrupts.cpp src/serial.cpp src/i2c.cpp src/mpu6050.cpp)
 
 target_include_directories(${TARGET_NAME}.elf PRIVATE /usr/avr/include)
 
