@@ -20,7 +20,6 @@ INCLUDES = -I/usr/avr/include -I$(INCDIR)
 TARGET_ELF = $(BUILDDIR)/$(TARGET).elf
 TARGET_HEX = $(BUILDDIR)/$(TARGET).hex
 
-# Rules
 all: $(BUILDDIR) $(TARGET_ELF) $(TARGET_HEX)
 
 $(TARGET_ELF): $(OBJ)
