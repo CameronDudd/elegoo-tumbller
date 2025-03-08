@@ -3,20 +3,18 @@
  *   All rights reserved.
  */
 
-#include "mpu6050.hpp"
+#include "mpu6050.h"
 
-#include "i2c.hpp"
+#include "i2c.h"
 
-static void _initMPU6050() {
+void initMPU6050() {
   i2cStart();
   i2cWrite(MPU6050_SLAVE_ADDR << 1);
   i2cWrite(MPU6050_PWR_MGMT_1);
   i2cStop();
 }
 
-MPU6050Controller::MPU6050Controller() { _initMPU6050(); };
-
-void MPU6050Controller::readAccelerometer(int16_t* ax, int16_t* ay, int16_t* az) {
+void readAccelerometer(int16_t* ax, int16_t* ay, int16_t* az) {
   i2cStart();                               // S
   i2cWrite((MPU6050_SLAVE_ADDR << 1) | 0);  // AD+W
   // TODO (cameron): ACK
@@ -32,7 +30,7 @@ void MPU6050Controller::readAccelerometer(int16_t* ax, int16_t* ay, int16_t* az)
 }
 
 // FIXME (cameron): temperature is currently broken
-void MPU6050Controller::readTemperature(double* temp) {
+void readTemperature(double* temp) {
   i2cStart();                               // S
   i2cWrite((MPU6050_SLAVE_ADDR << 1) | 0);  // AD+W
   // TODO (cameron): ACK
@@ -46,7 +44,7 @@ void MPU6050Controller::readTemperature(double* temp) {
   *temp = ((tempOut / 340) + 36.53);
 };
 
-void MPU6050Controller::readGyrometer(int16_t* gx, int16_t* gy, int16_t* gz) {
+void readGyrometer(int16_t* gx, int16_t* gy, int16_t* gz) {
   i2cStart();                               // S
   i2cWrite((MPU6050_SLAVE_ADDR << 1) | 0);  // AD+W
   // TODO (cameron): ACK

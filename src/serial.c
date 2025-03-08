@@ -3,14 +3,14 @@
  *   All rights reserved.
  */
 
-#include "serial.hpp"
+#include "serial.h"
 
 #include <avr/io.h>  // memory address definitions
 
 #include "constants.h"
 
 /* As outlined by the documentation */
-static void _usart_init() {
+void usart_init() {
   UBRR0 = 0;  // reset
 
   /* Set baud rate */
@@ -26,16 +26,14 @@ static void _usart_init() {
   UBRR0 = UBRR_FROM_BAUD;
 }
 
-Serial::Serial() { _usart_init(); }
-
 /* As outlined by the documentation */
-void Serial::_uart_transmit(unsigned char data) {
+static void _uart_transmit(unsigned char data) {
   while (!(UCSR0A & (1 << UDRE0))) {  // wait until UDR0 ready to accept data
   }
   UDR0 = data;  // put data into the buffer
 }
 
-void Serial::uart_print(const char *str) {
+void uart_print(const char *str) {
   while (*str) {
     _uart_transmit(*str);
     str++;

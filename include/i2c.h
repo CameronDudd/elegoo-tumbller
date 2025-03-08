@@ -9,7 +9,7 @@
 #include <stdint.h>
 
 // Implementations as seen by the documentation
-enum class I2CStatus : uint8_t {
+typedef enum {
   START = 0x08,
   START2 = 0x10,
   SLA_W_ACK = 0x18,
@@ -18,7 +18,7 @@ enum class I2CStatus : uint8_t {
   DATA_NACK = 0x30,
   SLA_R_ACK = 0x40,
   UNDEFINED = 0xFF,
-};
+} I2CStatus;
 
 void i2cInit();
 void i2cStart();

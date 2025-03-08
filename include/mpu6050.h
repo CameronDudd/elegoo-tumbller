@@ -63,13 +63,9 @@
 
 #include <stdint.h>
 
-class MPU6050Controller {
- public:
-  MPU6050Controller();
-  ~MPU6050Controller();
-  void readAccelerometer(int16_t* ax, int16_t* ay, int16_t* az);
-  void readTemperature(double* temp);
-  void readGyrometer(int16_t* gx, int16_t* gy, int16_t* gz);
-};
+void initMPU6050();
+void readAccelerometer(int16_t* ax, int16_t* ay, int16_t* az);
+void readTemperature(double* temp);
+void readGyrometer(int16_t* gx, int16_t* gy, int16_t* gz);
 
 #endif  // MPU6050_H
