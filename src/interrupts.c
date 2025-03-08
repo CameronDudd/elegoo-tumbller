@@ -3,7 +3,7 @@
  *   All rights reserved.
  */
 
-#include "interrupts.hpp"
+#include "interrupts.h"
 
 #include <avr/interrupt.h>
 

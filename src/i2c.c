@@ -3,7 +3,7 @@
  *   All rights reserved.
  */
 
-#include "i2c.hpp"
+#include "i2c.h"
 
 #include <avr/io.h>
 

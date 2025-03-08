@@ -3,13 +3,13 @@
  *   All rights reserved.
  */
 
-#include "motor.hpp"
+#include "motor.h"
 
 #include <avr/io.h>
 
 // TODO (cameron): better comments / documentation
 
-static void _initPWM() {
+void initPWM() {
   /*
    * OCR0A Output compare register 0A
    * OCR0B Output compare register 0B
@@ -25,7 +25,7 @@ static void _initPWM() {
   OCR0B = 0;  // Duty cycle for PD5
 };
 
-static void _initMotors() {
+void initMotors() {
   /*
    * PB0 STBY
    * PD5 Left  motor PWM output control pin
@@ -44,30 +44,24 @@ static void _initMotors() {
   PORTD &= ~((1 << PD5) | (1 << PD6));
 };
 
-// MotorController
-MotorController::MotorController() {
-  _initPWM();
-  _initMotors();
-}
-
-void MotorController::enableMotors() {
+void enableMotors() {
   PORTB |= (1 << PB0);  // set PB0 HIGH
 }
 
-void MotorController::disableMotors() {
+void disableMotors() {
   PORTB &= ~(1 << PB0);  // set PB0 LOW
   OCR0A = 0;
   OCR0B = 0;
 }
 
-void MotorController::setSpeed(uint8_t speed) {
+void setSpeed(uint8_t speed) {
   OCR0A = speed;
   OCR0B = speed;
 }
 
-void MotorController::forward() {}  // TODO (cameron):
+void forward() {}  // TODO (cameron):
 
-void MotorController::stop() {  // TODO (cameron):
+void stop() {  // TODO (cameron):
   OCR0A = 0;
   OCR0B = 0;
 }
