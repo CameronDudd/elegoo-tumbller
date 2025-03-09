@@ -40,6 +40,11 @@
 #ifndef MPU6050_H
 #define MPU6050_H
 
+#define MPU6050_WAKE 0x00
+
+#define MPU6050_ACCEL_CONFIG 0x1C
+#define AFS_SEL_BIT_OFFSET 4
+
 #define MPU6050_ACCEL_XOUT_H 0x3B
 #define MPU6050_ACCEL_XOUT_L 0x3C
 #define MPU6050_ACCEL_YOUT_H 0x3D
@@ -63,7 +68,15 @@
 
 #include <stdint.h>
 
+typedef enum {
+  RANGE_2G = 0,
+  RANGE_4G = 1,
+  RANGE_8G = 2,
+  RANGE_16G = 3,
+} ACCEL_CONFIG;
+
 void initMPU6050();
+void configureAccelerometer(ACCEL_CONFIG config);
 void readAccelerometer(int16_t* ax, int16_t* ay, int16_t* az);
 void readTemperature(double* temp);
 void readGyrometer(int16_t* gx, int16_t* gy, int16_t* gz);

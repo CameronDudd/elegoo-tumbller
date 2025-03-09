@@ -11,7 +11,19 @@ void initMPU6050() {
   i2cStart();
   i2cWrite(MPU6050_SLAVE_ADDR << 1);
   i2cWrite(MPU6050_PWR_MGMT_1);
+  i2cWrite(MPU6050_WAKE);  // wake
   i2cStop();
+}
+
+void configureAccelerometer(ACCEL_CONFIG config) {
+  i2cStart();                               // S
+  i2cWrite((MPU6050_SLAVE_ADDR << 1) | 0);  // AD+W
+  // TODO (cameron): ACK
+  i2cWrite(MPU6050_ACCEL_CONFIG);  // RA
+  // TODO (cameron): ACK
+  i2cWrite((((uint8_t)config) << AFS_SEL_BIT_OFFSET));
+  // TODO (cameron): ACK
+  i2cStop();  // P
 }
 
 void readAccelerometer(int16_t* ax, int16_t* ay, int16_t* az) {

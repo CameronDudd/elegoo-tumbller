@@ -6,6 +6,8 @@
 #include "serial.h"
 
 #include <avr/io.h>  // memory address definitions
+#include <stdarg.h>
+#include <stdio.h>
 
 #include "constants.h"
 
@@ -33,9 +35,18 @@ static void _uart_transmit(unsigned char data) {
   UDR0 = data;  // put data into the buffer
 }
 
-void uart_print(const char *str) {
+void uart_print(const char* str) {
   while (*str) {
     _uart_transmit(*str);
     str++;
   }
+}
+
+void uart_printf(const char* format, ...) {
+  char out[200];
+  va_list args;
+  va_start(args, format);
+  vsprintf(out, format, args);
+  va_end(args);
+  uart_print(out);
 }
