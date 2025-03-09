@@ -46,7 +46,8 @@ and a constant damping force $k$ proportional to the tangential velocity $v_{tan
 $$
 k * v_{tangential}
 $$$$
-kr\dot{\theta}$$
+kr\dot{\theta}
+$$
 This means that the pendulum experiences a "dropping" force along $\hat{e}$ of
 $$
 \vec{F}_{falling} = [mg\theta - k\dot{\theta}]\hat{e}
