@@ -1,4 +1,5 @@
-CC = avr-gcc
+CC = gcc
+AVR_CC = avr-gcc
 OBJCOPY = avr-objcopy
 AVRDUDE = avrdude
 CFLAGS = -Wall -Wextra -g -std=c99
@@ -9,24 +10,32 @@ SRCDIR = src
 INCDIR = include
 BUILDDIR = build
 BACKUPDIR = backup
+LIBDIR = lib
+TESTDIR = tests
+UNITYDIR = $(LIBDIR)/unity
+UNITYFIXTUREDIR = $(UNITYDIR)/extras/fixture
+UNITYMEMORYDIR = $(UNITYDIR)/extras/memory
+
 TARGET = main
 PORT = /dev/ttyUSB0
 BAUD = 115200
 
 SRC = $(wildcard $(SRCDIR)/*.c)
+SRCTESTS = $(wildcard $(TESTDIR)/*.c) $(wildcard $(UNITYDIR)/src/*.c) $(wildcard $(UNITYFIXTUREDIR)/src/*.c) $(wildcard $(UNITYMEMORYDIR)/src/*.c)
 OBJ = $(patsubst $(SRCDIR)/%.c, $(BUILDDIR)/%.o, $(SRC))
-INCLUDES = -I/usr/avr/include -I$(INCDIR)
+INCLUDES = -I$(INCDIR) -I./lib/unity/src -I$(UNITYFIXTUREDIR)/src -I$(UNITYMEMORYDIR)/src
 
 TARGET_ELF = $(BUILDDIR)/$(TARGET).elf
 TARGET_HEX = $(BUILDDIR)/$(TARGET).hex
+TARGET_TEST = $(BUILDDIR)/test
 
-all: $(BUILDDIR) $(TARGET_ELF) $(TARGET_HEX)
+all: $(BUILDDIR) $(TARGET_ELF) $(TARGET_HEX) test
 
 $(TARGET_ELF): $(OBJ)
-	$(CC) -mmcu=$(MCU) $(CFLAGS) $(OBJ) -o $@
+	$(AVR_CC) -mmcu=$(MCU) $(CFLAGS) $(OBJ) -o $@
 
 $(BUILDDIR)/%.o: $(SRCDIR)/%.c
-	$(CC) -mmcu=$(MCU) $(CFLAGS) $(INCLUDES) -DF_CPU=$(F_CPU) -c $< -o $@
+	$(AVR_CC) -mmcu=$(MCU) $(CFLAGS) $(INCLUDES) -DF_CPU=$(F_CPU) -c $< -o $@
 
 $(TARGET_HEX): $(TARGET_ELF)
 	$(OBJCOPY) -O ihex -R .eeprom $(TARGET_ELF) $(TARGET_HEX)
@@ -42,5 +51,9 @@ $(BUILDDIR):
 
 clean:
 	rm -rf $(BUILDDIR) $(TARGET_ELF) $(TARGET_HEX)
+
+test:
+	$(CC) $(CFLAGS) $(INCLUDES) $(SRCTESTS) -o $(TARGET_TEST)
+	./$(TARGET_TEST)
 
 .PHONY: all flash flash-original clean test
