@@ -12,6 +12,8 @@ BUILDDIR = build
 BACKUPDIR = backup
 LIBDIR = lib
 TESTDIR = tests
+MOCKDIR = mocks
+AVRDIR = $(LIBDIR)/avr-libc
 UNITYDIR = $(LIBDIR)/unity
 UNITYFIXTUREDIR = $(UNITYDIR)/extras/fixture
 UNITYMEMORYDIR = $(UNITYDIR)/extras/memory
@@ -21,9 +23,10 @@ PORT = /dev/ttyUSB0
 BAUD = 115200
 
 SRC = $(wildcard $(SRCDIR)/*.c)
-SRCTESTS = $(wildcard $(TESTDIR)/*.c) $(wildcard $(UNITYDIR)/src/*.c) $(wildcard $(UNITYFIXTUREDIR)/src/*.c) $(wildcard $(UNITYMEMORYDIR)/src/*.c)
+SRCTESTS = $(wildcard $(TESTDIR)/*.c) $(wildcard $(MOCKDIR)/*.c) $(wildcard $(UNITYDIR)/src/*.c) $(wildcard $(UNITYFIXTUREDIR)/src/*.c) $(wildcard $(UNITYMEMORYDIR)/src/*.c)
 OBJ = $(patsubst $(SRCDIR)/%.c, $(BUILDDIR)/%.o, $(SRC))
-INCLUDES = -I$(INCDIR) -I./lib/unity/src -I$(UNITYFIXTUREDIR)/src -I$(UNITYMEMORYDIR)/src
+INCLUDES = -I$(INCDIR) -I$(AVRDIR)/include
+TESTINCLUDES = -I$(INCDIR) -I$(MOCKDIR) -I$(UNITYDIR)/src -I$(UNITYFIXTUREDIR)/src -I$(UNITYMEMORYDIR)/src
 
 TARGET_ELF = $(BUILDDIR)/$(TARGET).elf
 TARGET_HEX = $(BUILDDIR)/$(TARGET).hex
@@ -52,8 +55,8 @@ $(BUILDDIR):
 clean:
 	rm -rf $(BUILDDIR) $(TARGET_ELF) $(TARGET_HEX)
 
-test:
-	$(CC) $(CFLAGS) $(INCLUDES) $(SRCTESTS) -o $(TARGET_TEST)
+test: $(BUILDDIR)
+	$(CC) $(CFLAGS) -DUNIT_TEST $(TESTINCLUDES) $(SRCTESTS) -o $(TARGET_TEST)
 	./$(TARGET_TEST)
 
 .PHONY: all flash flash-original clean test

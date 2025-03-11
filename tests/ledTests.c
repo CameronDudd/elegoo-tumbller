@@ -3,6 +3,7 @@
  *   All rights reserved.
  */
 
+#include "led.h"
 #include "unity.h"
 #include "unity_fixture.h"
 

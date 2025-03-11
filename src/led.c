@@ -5,8 +5,6 @@
 
 #include "led.h"
 
-#include <avr/io.h>
-
 void initLED() {
   DDRB |= (1 << PB5);  // Set PB5 as output (for LED)
   DDRD = 0x00;         // Set all D port pins to input
