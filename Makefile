@@ -56,7 +56,7 @@ clean:
 	rm -rf $(BUILDDIR) $(TARGET_ELF) $(TARGET_HEX)
 
 test: $(BUILDDIR)
-	$(CC) $(CFLAGS) -DUNIT_TEST $(TESTINCLUDES) $(SRCTESTS) -o $(TARGET_TEST)
+	$(CC) $(CFLAGS) -DUNIT_TEST $(TESTINCLUDES) $(SRCTESTS) src/led.c -o $(TARGET_TEST)
 	./$(TARGET_TEST)
 
 .PHONY: all flash flash-original clean test
