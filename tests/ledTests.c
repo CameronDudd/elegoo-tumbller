@@ -4,6 +4,7 @@
  */
 
 #include "led.h"
+#include "mock_avr_io.h"
 #include "unity.h"
 #include "unity_fixture.h"
 
@@ -13,7 +14,6 @@ TEST_SETUP(ledTests) {
   DDRB = 0x00;
   DDRD = 0xFF;
   PORTB = 0xFF;
-  // PORTD = 0xFF;
 }
 
 TEST_TEAR_DOWN(ledTests) {}

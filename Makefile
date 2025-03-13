@@ -23,8 +23,14 @@ PORT = /dev/ttyUSB0
 BAUD = 115200
 
 SRC = $(wildcard $(SRCDIR)/*.c)
-SRCTESTS = $(wildcard $(TESTDIR)/*.c) $(wildcard $(MOCKDIR)/*.c) $(wildcard $(UNITYDIR)/src/*.c) $(wildcard $(UNITYFIXTUREDIR)/src/*.c) $(wildcard $(UNITYMEMORYDIR)/src/*.c)
+SRCTESTS = $(wildcard $(TESTDIR)/*.c) \
+		   $(wildcard $(MOCKDIR)/*.c) \
+		   $(wildcard $(UNITYDIR)/src/*.c) \
+		   $(wildcard $(UNITYFIXTUREDIR)/src/*.c) \
+		   $(wildcard $(UNITYMEMORYDIR)/src/*.c)
+
 OBJ = $(patsubst $(SRCDIR)/%.c, $(BUILDDIR)/%.o, $(SRC))
+
 INCLUDES = -I$(INCDIR) -I$(AVRDIR)/include
 TESTINCLUDES = -I$(INCDIR) -I$(MOCKDIR) -I$(UNITYDIR)/src -I$(UNITYFIXTUREDIR)/src -I$(UNITYMEMORYDIR)/src
 
@@ -56,7 +62,7 @@ clean:
 	rm -rf $(BUILDDIR) $(TARGET_ELF) $(TARGET_HEX)
 
 test: $(BUILDDIR)
-	$(CC) $(CFLAGS) -DUNIT_TEST $(TESTINCLUDES) $(SRCTESTS) src/led.c -o $(TARGET_TEST)
+	$(CC) $(CFLAGS) -DUNIT_TEST $(TESTINCLUDES) $(SRCTESTS) src/led.c src/i2c.c -o $(TARGET_TEST)
 	./$(TARGET_TEST)
 
 .PHONY: all flash flash-original clean test

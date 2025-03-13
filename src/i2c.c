@@ -5,9 +5,13 @@
 
 #include "i2c.h"
 
-#include <avr/io.h>
-
 #include "constants.h"
+
+#ifdef UNIT_TEST
+#include "mock_avr_io.h"
+#else
+#include <avr/io.h>
+#endif
 
 void i2cInit() {
   TWSR = 0x00;                            // prescaler 0 TWSR1:0 = 00
