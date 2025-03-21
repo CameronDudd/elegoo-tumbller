@@ -17,7 +17,7 @@ typedef enum {
   DATA_ACK = 0x28,
   DATA_NACK = 0x30,
   SLA_R_ACK = 0x40,
-  UNDEFINED = 0xFF,
+  UNDEFINED = 0xF8,
 } I2CStatus;
 
 void i2cInit();
