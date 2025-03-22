@@ -8,6 +8,8 @@
 
 #include <stdint.h>
 
+#define ISR(VECTOR) void VECTOR()
+
 #define PB0 0
 #define PB5 5
 
@@ -757,5 +759,8 @@ extern volatile uint8_t UDR0;
 #define UDR0_5 5
 #define UDR0_6 6
 #define UDR0_7 7
+
+void sei();
+void cli();
 
 #endif  // MOCK_AVR_IO_H

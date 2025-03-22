@@ -3,9 +3,11 @@
  *   All rights reserved.
  */
 
-#include "interrupts.h"
-
+#ifdef UNIT_TEST
+#include "mock_avr_io.h"
+#else
 #include <avr/interrupt.h>
+#endif
 
 volatile unsigned long leftWheelPulses;
 volatile unsigned long rightWheelPulses;

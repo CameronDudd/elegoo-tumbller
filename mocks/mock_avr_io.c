@@ -5,6 +5,11 @@
 
 #include "mock_avr_io.h"
 
+uint8_t interruptsEnabled = 0;
+int numInterruptsTriggered = 0;
+void cli() { interruptsEnabled = 0; };
+void sei() { interruptsEnabled = 1; };
+
 volatile uint8_t PINB = 0x03;
 volatile uint8_t DDRB = 0x04;
 volatile uint8_t PORTB = 0x05;
