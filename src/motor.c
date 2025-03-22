@@ -5,7 +5,11 @@
 
 #include "motor.h"
 
+#ifdef UNIT_TEST
+#include "mock_avr_io.h"
+#else
 #include <avr/io.h>
+#endif
 
 // TODO (cameron): better comments / documentation
 

@@ -2,7 +2,7 @@ CC = gcc
 AVR_CC = avr-gcc
 OBJCOPY = avr-objcopy
 AVRDUDE = avrdude
-CFLAGS = -Wall -Wextra -g -std=c99
+CFLAGS = -Wall -Wextra -g -std=c99 -DUNITY_OUTPUT_COLOR
 MCU = atmega328p
 F_CPU = 16000000UL
 
@@ -62,7 +62,7 @@ clean:
 	rm -rf $(BUILDDIR) $(TARGET_ELF) $(TARGET_HEX)
 
 test: $(BUILDDIR)
-	$(CC) $(CFLAGS) -DUNIT_TEST $(TESTINCLUDES) $(SRCTESTS) src/led.c src/i2c.c -o $(TARGET_TEST)
+	$(CC) $(CFLAGS) -DUNIT_TEST $(TESTINCLUDES) $(SRCTESTS) src/led.c src/i2c.c src/motor.c -o $(TARGET_TEST)
 	./$(TARGET_TEST)
 
 .PHONY: all flash flash-original clean test

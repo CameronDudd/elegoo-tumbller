@@ -8,7 +8,11 @@
 
 #include <stdint.h>
 
+#define PB0 0
 #define PB5 5
+
+#define PD5 5
+#define PD6 6
 
 extern volatile uint8_t PINB;
 #define PINB0 0

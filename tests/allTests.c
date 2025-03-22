@@ -6,8 +6,12 @@
 #include "unity_fixture.h"
 
 static void _runAllTests(void) {
+  printf("LED Tests: ");
   RUN_TEST_GROUP(ledTests);
+  printf("\ni2c Tests: ");
   RUN_TEST_GROUP(i2cTests);
+  printf("\nMotor Tests: ");
+  RUN_TEST_GROUP(motorTests);
 }
 
 int main(int argc, const char* argv[]) { return UnityMain(argc, argv, _runAllTests); }
