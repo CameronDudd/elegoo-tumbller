@@ -23,11 +23,12 @@ PORT = /dev/ttyUSB0
 BAUD = 115200
 
 SRC = $(wildcard $(SRCDIR)/*.c)
-SRCTESTS = $(wildcard $(TESTDIR)/*.c) \
-		   $(wildcard $(MOCKDIR)/*.c) \
-		   $(wildcard $(UNITYDIR)/src/*.c) \
-		   $(wildcard $(UNITYFIXTUREDIR)/src/*.c) \
-		   $(wildcard $(UNITYMEMORYDIR)/src/*.c)
+
+SRCTESTS = $(wildcard $(TESTDIR)/*.c)             \
+		   $(wildcard $(MOCKDIR)/*.c)             \
+		   $(wildcard $(UNITYDIR)/src/*.c)        \
+		   $(wildcard $(UNITYMEMORYDIR)/src/*.c)  \
+		   $(wildcard $(UNITYFIXTUREDIR)/src/*.c)
 
 OBJ = $(patsubst $(SRCDIR)/%.c, $(BUILDDIR)/%.o, $(SRC))
 
@@ -62,7 +63,7 @@ clean:
 	rm -rf $(BUILDDIR) $(TARGET_ELF) $(TARGET_HEX)
 
 test: $(BUILDDIR)
-	$(CC) $(CFLAGS) -DUNIT_TEST $(TESTINCLUDES) $(SRCTESTS) src/led.c src/i2c.c src/motor.c src/interrupts.c -o $(TARGET_TEST)
+	$(CC) $(CFLAGS) -DUNIT_TEST $(TESTINCLUDES) $(SRCTESTS) src/led.c src/i2c.c src/motor.c src/interrupts.c src/mpu6050.c -o $(TARGET_TEST)
 	./$(TARGET_TEST)
 
 .PHONY: all flash flash-original clean test

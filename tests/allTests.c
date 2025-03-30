@@ -14,6 +14,8 @@ static void _runAllTests(void) {
   RUN_TEST_GROUP(motorTests);
   printf("\nInterrupt Tests: ");
   RUN_TEST_GROUP(interruptsTests);
+  printf("\nMPU6050 Tests:   ");
+  RUN_TEST_GROUP(mpu6050Tests);
 }
 
 int main(int argc, const char* argv[]) { return UnityMain(argc, argv, _runAllTests); }
