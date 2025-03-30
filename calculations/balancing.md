@@ -79,3 +79,17 @@ $$$$
 $$
 
 Where $k_1$ and $k_2$ are constants to be determined through testing. This equation will be used as the wheel acceleration control algorithm and through measuring the angle of inclination $\theta$ and the angular velocity $\dot{\theta}$ this should be capable of balancing the vehicle
+
+
+### PID Control:
+To achieve the desired acceleration I'll use a PID controller [Proportional–integral–derivative_controller](https://en.wikipedia.org/wiki/Proportional%E2%80%93integral%E2%80%93derivative_controller)
+
+$$
+\text{setpoint: }SP = r(t)
+$$$$
+\text{process variable: }PV = y(t)
+$$$$
+\text{error value: }e(t) = r(t) - y(t)
+$$$$
+\text{control variable: } u(t) = K_pe(t) + K_i\int{e(t)dt} + K_p\frac{de}{dt}
+$$
