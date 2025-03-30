@@ -5,19 +5,24 @@
 
 #include "serial.h"
 
-#include <avr/io.h>  // memory address definitions
+#ifdef UNIT_TEST
+#include "mock_avr_io.h"
+#else
+#include <avr/io.h>
+#endif
+
 #include <stdarg.h>
 #include <stdio.h>
 
 #include "constants.h"
 
 /* As outlined by the documentation */
-void usart_init() {
-  UBRR0 = 0;  // reset
+void usartInit() {
+  UBRR0 = 0; // reset
 
   /* Set baud rate */
-  UBRR0H = (unsigned char)(UBRR_FROM_BAUD >> 8);
   UBRR0L = (unsigned char)UBRR_FROM_BAUD;
+  UBRR0H = (unsigned char)(UBRR_FROM_BAUD >> 8);
 
   /* Enable receiver and transmitter */
   UCSR0B = (1 << RXEN0) | (1 << TXEN0);
@@ -29,24 +34,24 @@ void usart_init() {
 }
 
 /* As outlined by the documentation */
-static void _uart_transmit(unsigned char data) {
-  while (!(UCSR0A & (1 << UDRE0))) {  // wait until UDR0 ready to accept data
+static void _uartTransmit(unsigned char data) {
+  while (!(UCSR0A & (1 << UDRE0))) { // wait until UDR0 ready to accept data
   }
-  UDR0 = data;  // put data into the buffer
+  UDR0 = data; // put data into the buffer
 }
 
-void uart_print(const char* str) {
+void uartPrint(const char *str) {
   while (*str) {
-    _uart_transmit(*str);
+    _uartTransmit(*str);
     str++;
   }
 }
 
-void uart_printf(const char* format, ...) {
+void uartPrintf(const char *format, ...) {
   char out[200];
   va_list args;
   va_start(args, format);
   vsprintf(out, format, args);
   va_end(args);
-  uart_print(out);
+  uartPrint(out);
 }

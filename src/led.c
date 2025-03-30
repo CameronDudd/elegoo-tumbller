@@ -12,8 +12,8 @@
 #endif
 
 void initLED() {
-  DDRB |= (1 << PB5);  // Set PB5 as output (for LED)
-  DDRD = 0x00;         // Set all D port pins to input
+  DDRB |= (1 << PB5); // Set PB5 as output (for LED)
+  DDRD = 0x00;        // Set all D port pins to input
 }
 
 void toggleLED() { PORTB ^= (1 << PB5); }

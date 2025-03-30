@@ -16,6 +16,10 @@ static void _runAllTests(void) {
   RUN_TEST_GROUP(interruptsTests);
   printf("\nMPU6050 Tests:   ");
   RUN_TEST_GROUP(mpu6050Tests);
+  printf("\nSerial Tests:    ");
+  RUN_TEST_GROUP(serialTests);
 }
 
-int main(int argc, const char* argv[]) { return UnityMain(argc, argv, _runAllTests); }
+int main(int argc, const char *argv[]) {
+  return UnityMain(argc, argv, _runAllTests);
+}

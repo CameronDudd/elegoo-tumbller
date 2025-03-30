@@ -63,7 +63,7 @@ clean:
 	rm -rf $(BUILDDIR) $(TARGET_ELF) $(TARGET_HEX)
 
 test: $(BUILDDIR)
-	$(CC) $(CFLAGS) -DUNIT_TEST $(TESTINCLUDES) $(SRCTESTS) src/led.c src/i2c.c src/motor.c src/interrupts.c src/mpu6050.c -o $(TARGET_TEST)
+	$(CC) $(CFLAGS) -DUNIT_TEST $(TESTINCLUDES) $(SRCTESTS) src/led.c src/i2c.c src/motor.c src/interrupts.c src/mpu6050.c src/serial.c -o $(TARGET_TEST)
 	./$(TARGET_TEST)
 
 .PHONY: all flash flash-original clean test
