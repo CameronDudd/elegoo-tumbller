@@ -1,4 +1,4 @@
-### Working in polar coordinates
+### Working in polar coordinates:
 #### Important note:
 $$
 \hat{r} = \hat{x}\cos\theta + \hat{y}sin\theta
@@ -54,7 +54,7 @@ $$
 \vec{F}_{falling} = [mg\theta - k\dot{\theta}]\hat{e}
 $$
 
-### Balancing Robot
+### Balancing Robot:
 Using the **second derivative** derived earlier
 
 $$
