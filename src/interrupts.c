@@ -18,7 +18,7 @@ volatile unsigned long rightWheelSpeed;
 
 // FIXME (cameron): I doubt reading and writing to this is an atomic operation,
 // check here if there are clear timing bugs
-volatile unsigned long long millis = 0;
+volatile unsigned long millis = 0;
 
 void initEncoders() {
   EIMSK |= (1 << INT0); // Enable INT0 (left wheel encoder)
@@ -52,6 +52,13 @@ void initTimers() {
   TIMSK1 |= (1 << OCIE1A); // Output Compare A Match Interrupt Enable
 
   sei(); // global enable interrupts
+}
+
+void sleepMs(unsigned long timeMs) {
+  unsigned long prevMillis = millis;
+  while (millis - prevMillis < timeMs) {
+    __asm__("nop");
+  }
 }
 
 ISR(INT0_vect) {
