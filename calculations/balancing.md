@@ -61,12 +61,15 @@ $$
 \ddot{\vec{P}} = [\ddot{r} - r\dot{\theta}^2]\hat{r} + [2\dot{r}\dot{\theta} + r\ddot{\theta}]\hat{e}
 $$
 With $\ddot{r} = \dot{r} = 0$ (a fixed rod length) it can be seen that the equation of motion along $\hat{e}$ will be equal to
+
 $$
 \vec{a} = r\ddot{\theta}\hat{e}
 $$$$
 \therefore \vec{F}_{motion} = m\vec{a} = mr\ddot{\theta}
 $$
+
 Having the elegoo-tumbller $\vec{F}_{motion}$ counteract $\vec{F}_{falling}$ it can be seen
+
 $$
 mr\ddot{\theta} = mg\theta - kr\dot{\theta}
 $$$$
