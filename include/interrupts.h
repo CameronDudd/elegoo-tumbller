@@ -6,7 +6,9 @@
 #ifndef INTERUPTS_H
 #define INTERUPTS_H
 
+extern volatile unsigned long long millis;
+
 void initEncoders();
-void initSpeedTimer();
+void initTimers();
 
 #endif  // INTERUPTS_H

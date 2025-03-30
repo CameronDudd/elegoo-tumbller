@@ -34,16 +34,18 @@ TEST(interruptsTests, initEncoders) {
   TEST_ASSERT_EQUAL_UINT(0b00000001, EICRA);
   TEST_ASSERT_EQUAL_UINT(0b00010000, PCMSK2);
   TEST_ASSERT_EQUAL_UINT(0b00000100, PCICR);
+  TEST_ASSERT_EQUAL_UINT(0, millis);
   TEST_ASSERT_EQUAL_UINT(1, interruptsEnabled);
 }
 
-TEST(interruptsTests, initSpeedTimer) {
-  initSpeedTimer();
+TEST(interruptsTests, initTimers) {
+  initTimers();
   TEST_ASSERT_EQUAL_UINT8(0b00000000, TCCR1A);
   TEST_ASSERT_EQUAL_UINT8(0b00001011, TCCR1B);
   TEST_ASSERT_EQUAL_UINT8(25000, OCR1A);
   TEST_ASSERT_EQUAL_UINT8(0, OCR1B);
   TEST_ASSERT_EQUAL_UINT8(0b00000010, TIMSK1);
+  TEST_ASSERT_EQUAL_UINT(0, millis);
   TEST_ASSERT_EQUAL_UINT(1, interruptsEnabled);
 }
 
@@ -55,7 +57,7 @@ TEST(interruptsTests, ISR_TIMER1_COMPA_vect){SKIP}
 
 TEST_GROUP_RUNNER(interruptsTests) {
   RUN_TEST_CASE(interruptsTests, initEncoders);
-  RUN_TEST_CASE(interruptsTests, initSpeedTimer);
+  RUN_TEST_CASE(interruptsTests, initTimers);
   RUN_TEST_CASE(interruptsTests, ISR_INT0_vect);
   RUN_TEST_CASE(interruptsTests, ISR_PCINT2_vect);
   RUN_TEST_CASE(interruptsTests, ISR_TIMER1_COMPA_vect);

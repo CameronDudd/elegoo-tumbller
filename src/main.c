@@ -22,7 +22,7 @@ int main() {
 
   // Setup speed measurement
   initEncoders();
-  initSpeedTimer();
+  initTimers();
   uartPrintf("+ measurements ready\r\n");
 
   // Setup mpu6050
@@ -34,7 +34,7 @@ int main() {
   int16_t ax, ay, az;
   while (1) {
     readAccelerometer(&ax, &ay, &az);
-    uartPrintf("axg=%7i ayg=%7i azg=%7i\r\n", ax, ay, az);
+    uartPrintf("time=%7i axg=%7i ayg=%7i azg=%7i\r\n", ax, ay, az);
   }
 
   return 0;
