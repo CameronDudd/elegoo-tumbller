@@ -10,6 +10,6 @@ extern volatile unsigned long millis;
 
 void initEncoders();
 void initTimers();
-void sleepMs(unsigned long timeMs);
+void delayMs(unsigned long timeMs);
 
 #endif  // INTERUPTS_H
