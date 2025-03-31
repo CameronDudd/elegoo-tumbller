@@ -52,7 +52,7 @@ void initTimers() {
   sei();  // global enable interrupts
 }
 
-void delayMs(unsigned long timeMs) {
+void delayMs(unsigned long timeMs) {  // FIXME (cameron): without using 100% of CPU
   unsigned long prevMillis = millis;
   while (millis - prevMillis < timeMs) {
     __asm__("nop");
