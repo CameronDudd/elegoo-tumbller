@@ -3,6 +3,7 @@ AVR_CC = avr-gcc
 OBJCOPY = avr-objcopy
 AVRDUDE = avrdude
 CFLAGS = -Wall -Wextra -g -std=c99 -DUNITY_OUTPUT_COLOR
+LDFLAGS = -Wl,-u,vfprintf -lprintf_flt -lm
 MCU = atmega328p
 F_CPU = 16000000UL
 
@@ -42,7 +43,7 @@ TARGET_TEST = $(BUILDDIR)/test
 all: $(BUILDDIR) $(TARGET_ELF) $(TARGET_HEX) test
 
 $(TARGET_ELF): $(OBJ)
-	$(AVR_CC) -mmcu=$(MCU) $(CFLAGS) $(OBJ) -o $@
+	$(AVR_CC) -mmcu=$(MCU) $(CFLAGS) $(OBJ) -o $@ $(LDFLAGS)
 
 $(BUILDDIR)/%.o: $(SRCDIR)/%.c
 	$(AVR_CC) -mmcu=$(MCU) $(CFLAGS) $(INCLUDES) -DF_CPU=$(F_CPU) -c $< -o $@
@@ -50,7 +51,7 @@ $(BUILDDIR)/%.o: $(SRCDIR)/%.c
 $(TARGET_HEX): $(TARGET_ELF)
 	$(OBJCOPY) -O ihex -R .eeprom $(TARGET_ELF) $(TARGET_HEX)
 
-flash: $(TARGET_HEX)
+flash: $(BUILDDIR) $(TARGET_HEX)
 	$(AVRDUDE) -c arduino -p m328p -P $(PORT) -b $(BAUD) -U flash:w:$(TARGET_HEX)
 
 flash-original:
