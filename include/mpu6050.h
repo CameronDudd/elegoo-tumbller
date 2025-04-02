@@ -42,7 +42,9 @@
 
 #define MPU6050_WAKE 0x00
 
+#define MPU6050_GYRO_CONFIG 0x1B
 #define MPU6050_ACCEL_CONFIG 0x1C
+#define FS_SEL_BIT_OFFSET 4
 #define AFS_SEL_BIT_OFFSET 4
 
 #define MPU6050_ACCEL_XOUT_H 0x3B
@@ -66,8 +68,12 @@
 
 #define MPU6050_SLAVE_ADDR 0x68
 
-#include <stdint.h>
+#include "vectors.h"
 
+// AFS_SEL=0 16,384 LSB/g
+// AFS_SEL=1 8,192 LSB/g
+// AFS_SEL=2 4,096 LSB/g
+// AFS_SEL=3 2,048 LSB
 typedef enum {
   RANGE_2G = 0,
   RANGE_4G = 1,
@@ -75,10 +81,22 @@ typedef enum {
   RANGE_16G = 3,
 } ACCEL_CONFIG;
 
+// FS_SEL=0 131 LSB/(º/s)
+// FS_SEL=1 65.5 LSB/(º/s)
+// FS_SEL=2 32.8 LSB/(º/s)
+// FS_SEL=3 16.4 LSB/(º/s)
+typedef enum {
+  RANGE_250 = 0,
+  RANGE_500 = 1,
+  RANGE_1000 = 2,
+  RANGE_2000 = 3,
+} GYRO_CONFIG;
+
 void initMPU6050();
 void configureAccelerometer(ACCEL_CONFIG config);
-void readAccelerometer(int16_t* ax, int16_t* ay, int16_t* az);
+void configureGyrometer(GYRO_CONFIG config);
+void readAccelerometer(vec3* accel);
 void readTemperature(double* temp);
-void readGyrometer(int16_t* gx, int16_t* gy, int16_t* gz);
+void readGyrometer(vec3* gyro);
 
 #endif  // MPU6050_H
