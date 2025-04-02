@@ -5,12 +5,6 @@
 
 #include "motor.h"
 
-#ifdef UNIT_TEST
-#include "mock_avr_io.h"
-#else
-#include <avr/io.h>
-#endif
-
 // TODO (cameron): better comments / documentation
 
 void initPWM() {
@@ -21,12 +15,13 @@ void initPWM() {
   TCCR0A = 0;
   TCCR0B = 0;
 
-  // WGM02:0 = 001 (Phase Correct PWM) 0xFF top, COM0A0 = 1 (Toggle OC0A on Compare Match)
+  // WGM02:0 = 001 (Phase Correct PWM) 0xFF top, COM0A0 = 1 (Toggle OC0A on
+  // Compare Match)
   TCCR0A = (1 << WGM00) | (1 << COM0A1) | (1 << COM0B1);
-  TCCR0B = (1 << CS00);  // No prescaler, start timer
+  TCCR0B = (1 << CS00); // No prescaler, start timer
 
-  OCR0A = 0;  // Duty cycle for PD6
-  OCR0B = 0;  // Duty cycle for PD5
+  OCR0A = 0; // Duty cycle for PD6
+  OCR0B = 0; // Duty cycle for PD5
 };
 
 void initMotors() {
@@ -40,20 +35,20 @@ void initMotors() {
 
   // Enable motor output pins
   // PD5 & PD6 also set OC0A and OC0B for PWM
-  DDRB |= (1 << PB0);
-  DDRD |= (1 << PD5) | (1 << PD6);
+  DDRB |= (1 << PB0) | (1 << L_MOTOR_ROTATION_DIRECTION);
+  DDRD |= (1 << PD5) | (1 << PD6) | (1 << R_MOTOR_ROTATION_DIRECTION);
 
   // tie all output low
-  PORTB &= ~(1 << PB0);
-  PORTD &= ~((1 << PD5) | (1 << PD6));
+  PORTB &= ~((1 << PB0) | (1 << L_MOTOR_ROTATION_DIRECTION));
+  PORTD &= ~((1 << PD5) | (1 << PD6) | (1 << R_MOTOR_ROTATION_DIRECTION));
 };
 
 void enableMotors() {
-  PORTB |= (1 << PB0);  // set PB0 HIGH
+  PORTB |= (1 << PB0); // set PB0 HIGH
 }
 
 void disableMotors() {
-  PORTB &= ~(1 << PB0);  // set PB0 LOW
+  PORTB &= ~(1 << PB0); // set PB0 LOW
   OCR0A = 0;
   OCR0B = 0;
 }
@@ -63,9 +58,17 @@ void setSpeed(uint8_t speed) {
   OCR0B = speed;
 }
 
-void forward() {}  // TODO (cameron):
+void forward() {
+  PORTB &= ~(1 << L_MOTOR_ROTATION_DIRECTION);
+  PORTD &= ~(1 << R_MOTOR_ROTATION_DIRECTION);
+}
 
-void stop() {  // TODO (cameron):
+void reverse() {
+  PORTB |= (1 << L_MOTOR_ROTATION_DIRECTION);
+  PORTD |= (1 << R_MOTOR_ROTATION_DIRECTION);
+}
+
+void stop() { // TODO (cameron):
   OCR0A = 0;
   OCR0B = 0;
 }

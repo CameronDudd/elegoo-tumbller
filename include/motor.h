@@ -8,6 +8,15 @@
 
 #include <stdint.h>
 
+#ifdef UNIT_TEST
+#include "mock_avr_io.h"
+#else
+#include <avr/io.h>
+#endif
+
+#define R_MOTOR_ROTATION_DIRECTION PD7
+#define L_MOTOR_ROTATION_DIRECTION PB4
+
 void initPWM();
 void initMotors();
 void enableMotors();
