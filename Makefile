@@ -33,7 +33,7 @@ SRCTESTS = $(wildcard $(TESTDIR)/*.c)             \
 
 OBJ = $(patsubst $(SRCDIR)/%.c, $(BUILDDIR)/%.o, $(SRC))
 
-INCLUDES = -I$(INCDIR) -I$(AVRDIR)/include
+INCLUDES = -I$(INCDIR) -I/usr/avr/include
 TESTINCLUDES = -I$(INCDIR) -I$(MOCKDIR) -I$(UNITYDIR)/src -I$(UNITYFIXTUREDIR)/src -I$(UNITYMEMORYDIR)/src
 
 TARGET_ELF = $(BUILDDIR)/$(TARGET).elf
