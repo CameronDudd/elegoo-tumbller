@@ -67,7 +67,33 @@ TEST(motorTests, setSpeed) {
   TEST_ASSERT_EQUAL_UINT8(0b11111111, OCR0B);
 }
 
-TEST(motorTests, forward){SKIP}
+TEST(motorTests, forward) {
+  PORTB = 0x00;
+  PORTD = 0x00;
+  forward();
+  TEST_ASSERT_EQUAL_UINT8(0b00000000, PORTB);
+  TEST_ASSERT_EQUAL_UINT8(0b00000000, PORTD);
+
+  PORTB = 0xFF;
+  PORTD = 0xFF;
+  forward();
+  TEST_ASSERT_EQUAL_UINT8(0b11101111, PORTB);
+  TEST_ASSERT_EQUAL_UINT8(0b01111111, PORTD);
+}
+
+TEST(motorTests, reverse) {
+  PORTB = 0x00;
+  PORTD = 0x00;
+  reverse();
+  TEST_ASSERT_EQUAL_UINT8(0b00010000, PORTB);
+  TEST_ASSERT_EQUAL_UINT8(0b10000000, PORTD);
+
+  PORTB = 0xFF;
+  PORTD = 0xFF;
+  reverse();
+  TEST_ASSERT_EQUAL_UINT8(0b11111111, PORTB);
+  TEST_ASSERT_EQUAL_UINT8(0b11111111, PORTD);
+}
 
 TEST(motorTests, stop) {
   stop();
@@ -82,5 +108,6 @@ TEST_GROUP_RUNNER(motorTests) {
   RUN_TEST_CASE(motorTests, disableMotors);
   RUN_TEST_CASE(motorTests, setSpeed);
   RUN_TEST_CASE(motorTests, forward);
+  RUN_TEST_CASE(motorTests, reverse);
   RUN_TEST_CASE(motorTests, stop);
 }

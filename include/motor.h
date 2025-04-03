@@ -14,8 +14,8 @@
 #include <avr/io.h>
 #endif
 
-#define R_MOTOR_ROTATION_DIRECTION PD7
 #define L_MOTOR_ROTATION_DIRECTION PB4
+#define R_MOTOR_ROTATION_DIRECTION PD7
 
 void initPWM();
 void initMotors();
