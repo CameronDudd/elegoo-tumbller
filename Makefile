@@ -67,4 +67,6 @@ test: $(BUILDDIR)
 	$(CC) $(CFLAGS) -DUNIT_TEST $(TESTINCLUDES) $(SRCTESTS) src/led.c src/i2c.c src/motor.c src/interrupts.c src/mpu6050.c src/serial.c -o $(TARGET_TEST)
 	./$(TARGET_TEST)
 
+tests: test
+
 .PHONY: all flash flash-original clean test
