@@ -8,6 +8,6 @@
 #ifndef BALANCE_H
 #define BALANCE_H
 
-double pitchPID(vec3 *accel, double *desiredPitch);
+double pitchPID(vec3 *accel, vec3 *gyro, double *desiredPitch);
 
 #endif  // BALANCE_H

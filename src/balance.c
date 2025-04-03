@@ -8,23 +8,26 @@
 
 #include <math.h>
 
-#define KP 1.0
+#define ALPHA 0.98
+#define KP 3.5
 #define KI 0.0
-#define KD 0.0
+#define KD 0.005
 
-// TODO (cameron): use gyro for prediction
-double pitchPID(vec3 *accel, double *desiredPitch) {
+double pitchPID(vec3 *accel, vec3 *gyro, double *desiredPitch) {
 
   static unsigned long lastMillis = 0;
   static double integralError = 0, previousError = 0;
 
-  double dt = millis - lastMillis;
+  double dt = (millis - lastMillis) / 1000.0;
   lastMillis = millis;
+  if (dt <= 0) {
+    dt = 0.001;
+  }
 
-  // Looking up is +'ve pitch
-  double currentPitch = atan2(accel->y, accel->z) * 180.0 / M_PI;
+  double pitch = atan2(accel->y, accel->z) * 180.0 / M_PI;
+  pitch = ALPHA * (pitch + gyro->x * dt) + (1 - ALPHA) * accel->x;
 
-  double error = *desiredPitch - currentPitch;
+  double error = *desiredPitch - pitch;
   integralError += (error * dt);
   double derivativeError = (error - previousError) / dt;
   previousError = error;
