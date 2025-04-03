@@ -11,10 +11,12 @@
 #define ISR(VECTOR) void VECTOR()
 
 #define PB0 0
+#define PB4 4
 #define PB5 5
 
 #define PD5 5
 #define PD6 6
+#define PD7 7
 
 extern volatile uint8_t PINB;
 #define PINB0 0
