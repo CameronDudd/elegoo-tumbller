@@ -5,7 +5,6 @@
 
 #include "mock_avr_io.h"
 #include "motor.h"
-#include "tests.h"
 #include "unity.h"
 #include "unity_fixture.h"
 
