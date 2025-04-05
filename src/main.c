@@ -49,6 +49,9 @@ int main() {
       reverse();
     }
     balancingPower *= (255.0 / 90.0);
+    if (balancingPower > 255) {
+      balancingPower = 255;
+    }
     uartPrintf("%f\r\n", balancingPower);
     setSpeed(balancingPower);
   }
