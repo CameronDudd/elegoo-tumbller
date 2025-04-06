@@ -4,13 +4,13 @@
  */
 
 #include "balance.h"
-#include "interrupts.h"
+#include "motor.h"
 
 #include <math.h>
 
 #define KP 12.5
-#define KI 0.001
-#define KD 0.01
+#define KI 0.0
+#define KD 0.0
 #define ALPHA 0.98
 #define MAX_OUTPUT 90
 

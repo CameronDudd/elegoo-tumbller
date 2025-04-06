@@ -17,8 +17,13 @@
 #define L_MOTOR_ROTATION_DIRECTION PB4
 #define R_MOTOR_ROTATION_DIRECTION PD7
 
+extern volatile unsigned long millis;
+extern volatile unsigned long leftWheelPulses;
+extern volatile unsigned long rightWheelPulses;
+
 void initPWM();
 void initMotors();
+void initEncoders();
 void enableMotors();
 void disableMotors();
 void setSpeed(uint8_t speed);

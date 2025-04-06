@@ -3,7 +3,7 @@
  *   All rights reserved.
  */
 
-#include "interrupts.h"
+#include "motor.h"
 
 #ifdef UNIT_TEST
 #include "mock_avr_io.h"

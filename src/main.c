@@ -4,11 +4,18 @@
  */
 
 #include "balance.h"
-#include "interrupts.h"
 #include "motor.h"
 #include "mpu6050.h"
 #include "serial.h"
+#include "timer.h"
 #include "vectors.h"
+
+typedef enum {
+  STDBY = 0,
+  BALANCE = 1,
+} State;
+
+State state = STDBY;
 
 int main() {
   // Setup serial
@@ -24,8 +31,10 @@ int main() {
 
   // Setup timed measurements
   initEncoders();
+  uartPrintf("+ encoders ready\r\n");
+
   initTimers();
-  uartPrintf("+ measurements ready\r\n");
+  uartPrintf("+ timers ready\r\n");
 
   // Setup mpu6050
   initMPU6050();
@@ -53,7 +62,7 @@ int main() {
       balancingPower = 255;
     }
     uartPrintf("%f\r\n", balancingPower);
-    setSpeed(balancingPower);
+    setSpeed((state == BALANCE) ? balancingPower : 0);
   }
 
   return 0;
