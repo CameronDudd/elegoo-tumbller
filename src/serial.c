@@ -39,7 +39,7 @@ void usartInit() {
   // UPMn1:0 bits enable and set the type of parity bit
   // USBSn bit selects between one or two stop bits blank for 1 stop bit
   // Set frame format: 8data, 1stop bit -> set by bluetooth module
-  UCSR0C = (3 << UCSZ00);
+  UCSR0C = (1 << UCSZ01) | (1 << UCSZ00); // 8 bits, no parity, 1 stop bit
 
   UBRR0 = UBRR_FROM_BAUD;
 }
