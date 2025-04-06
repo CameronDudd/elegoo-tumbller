@@ -8,15 +8,16 @@
 
 #include <math.h>
 
+#define KP 12.5
+#define KI 0.001
+#define KD 0.01
 #define ALPHA 0.98
-#define KP 3.5
-#define KI 0.0
-#define KD 0.005
+#define MAX_OUTPUT 90
 
 double pitchPID(vec3 *accel, vec3 *gyro, double *desiredPitch) {
 
   static unsigned long lastMillis = 0;
-  static double integralError = 0, previousError = 0;
+  static double integralError = 0, previousError = 0, previousPitch = 0;
 
   double dt = (millis - lastMillis) / 1000.0;
   lastMillis = millis;
@@ -24,12 +25,29 @@ double pitchPID(vec3 *accel, vec3 *gyro, double *desiredPitch) {
     dt = 0.001;
   }
 
-  double pitch = atan2(accel->y, accel->z) * 180.0 / M_PI;
-  pitch = ALPHA * (pitch + gyro->x * dt) + (1 - ALPHA) * accel->x;
+  double accPitch = atan2(accel->y, accel->z) * 180.0 / M_PI;
+  double pitch =
+      ALPHA * (previousPitch + gyro->x * dt) + (1 - ALPHA) * accPitch;
+  previousPitch = pitch;
 
   double error = *desiredPitch - pitch;
   integralError += (error * dt);
+
+  if (integralError > 90)
+    integralError = 90;
+  if (integralError < -90)
+    integralError = 90;
+
   double derivativeError = (error - previousError) / dt;
   previousError = error;
-  return (KP * error) + (KI * integralError) + (KD * derivativeError);
+  double output = (KP * error) + (KI * integralError) + (KD * derivativeError);
+  if (output > MAX_OUTPUT)
+    output = MAX_OUTPUT;
+  if (output < -MAX_OUTPUT)
+    output = -MAX_OUTPUT;
+
+  if (pitch <= -75 || 75 <= pitch)
+    output = 0;
+
+  return output;
 }
