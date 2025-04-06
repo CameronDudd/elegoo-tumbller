@@ -21,7 +21,5 @@ void BTSetDeviceName(const char *name);
 long BTSerialBaudRate();
 void BTSetSerialBaudRate(BTBAUD baud);
 void BTReset();
-void BTTx();
-void BTRx();
 
 #endif  // AB1602_H
