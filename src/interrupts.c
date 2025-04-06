@@ -60,8 +60,8 @@ ISR(PCINT2_vect) {
 }
 
 ISR(TIMER1_COMPA_vect) {
-  cli(); // disable interrupts
-  millis += 1;
+  cli();                                     // disable interrupts
+  millis += 1;                               // increment millis
   leftWheelSpeed = leftWheelPulses * 1000;   // same as / 0.001s
   rightWheelSpeed = rightWheelPulses * 1000; // same as / 0.001s
   leftWheelPulses = 0;                       // reset left wheel pulses
