@@ -3,11 +3,18 @@
  *   All rights reserved.
  */
 
+#include "interrupts.h"
+
 #ifdef UNIT_TEST
 #include "mock_avr_io.h"
 #else
 #include <avr/interrupt.h>
 #endif
+
+volatile unsigned long leftWheelSpeed;
+volatile unsigned long rightWheelSpeed;
+
+volatile unsigned long millis = 0;
 
 void initTimers() {
   /*
@@ -27,4 +34,14 @@ void initTimers() {
   TIMSK1 |= (1 << OCIE1A); // Output Compare A Match Interrupt Enable
 
   sei(); // global enable interrupts
+}
+
+ISR(TIMER1_COMPA_vect) {
+  cli();                                     // disable interrupts
+  millis += 1;                               // increment millis
+  leftWheelSpeed = leftWheelPulses * 1000;   // same as / 0.001s
+  rightWheelSpeed = rightWheelPulses * 1000; // same as / 0.001s
+  leftWheelPulses = 0;                       // reset left wheel pulses
+  rightWheelPulses = 0;                      // reset right wheel pulses
+  sei();                                     // enable interrupts
 }
