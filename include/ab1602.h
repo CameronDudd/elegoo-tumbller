@@ -13,13 +13,13 @@ typedef enum {
   BAUD_38400 = 3,
   BAUD_54600 = 4,
   BAUD_115200 = 5,
-} BTBAUD;
+} BTBaud;
 
-double BTSoftwareVersion();
-const char *BTDeviceName();
+void BTSoftwareVersion();
+void BTDeviceName();
 void BTSetDeviceName(const char *name);
-long BTSerialBaudRate();
-void BTSetSerialBaudRate(BTBAUD baud);
+void BTSerialBaudRate();
+void BTSetSerialBaudRate(BTBaud baud);
 void BTReset();
 
 #endif  // AB1602_H

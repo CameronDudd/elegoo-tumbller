@@ -5,7 +5,6 @@
 
 #include "serial.h"
 #include "constants.h"
-#include "timer.h"
 
 #ifdef UNIT_TEST
 #include "mock_avr_io.h"
@@ -18,9 +17,9 @@
 #include <stdio.h>
 
 #define RX_BUFF_SIZE 15
-volatile unsigned char commandBuff[RX_BUFF_SIZE] = {'\0'};
-volatile unsigned char *r = commandBuff; // reading from the command buffer
-volatile unsigned char *p = commandBuff; // writing to the command buffer
+volatile unsigned char uartRxBuff[RX_BUFF_SIZE] = {'\0'};
+volatile unsigned char *r = uartRxBuff; // reading from the command buffer
+volatile unsigned char *p = uartRxBuff; // writing to the command buffer
 
 // As outlined by the documentation
 void usartInit() {
@@ -33,7 +32,7 @@ void usartInit() {
   UBRR0L = (unsigned char)UBRR_FROM_BAUD;
   UBRR0H = (unsigned char)(UBRR_FROM_BAUD >> 8);
 
-  // Enable receiver and transmitter and receiver interrupt
+  // Enable receiver and transmitter and // receiver interrupt
   UCSR0B = (1 << RXEN0) | (1 << TXEN0); //  | (1 << RXCIE0);
 
   // UCSZn2:0 bits select number of data bits in the frame
@@ -58,17 +57,6 @@ unsigned char _uartReceive() {
   return UDR0;
 }
 
-// void uartReceive() {
-//   uartPrintf("Got %c\r\n", _uartReceive());
-//   uartPrintf("test\r\n");
-// for (size_t n = 0; n < buffSize - 1; n++) {
-//   char c = _uartReceive();
-//   uartPrintf("%c\r\n", c);
-//   buff[n] = c;
-// }
-// buff[buffSize - 1] = '\0';
-// }
-
 void uartPrint(const char *str) {
   while (*str != '\0') {
     _uartTransmit(*str);
@@ -85,10 +73,10 @@ void uartPrintf(const char *format, ...) {
   uartPrint(out);
 }
 
-ISR(USART_RX_vect) {
-  cli(); // disable interrupts
-  if ((p - commandBuff) >= RX_BUFF_SIZE - 1) {
-    p = commandBuff; // round robin
+ISR(USART_RX_vect) { // if interrupt is enabled write into the buffer
+  cli();             // disable interrupts
+  if ((p - uartRxBuff) >= RX_BUFF_SIZE - 1) {
+    p = uartRxBuff; // round robin
   }
   *p++ = UDR0;
   sei(); // enable interrupts
