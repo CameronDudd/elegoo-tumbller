@@ -4,31 +4,42 @@
  */
 
 #include "serial.h"
+#include "constants.h"
 
 #ifdef UNIT_TEST
 #include "mock_avr_io.h"
 #else
+#include <avr/interrupt.h>
 #include <avr/io.h>
 #endif
 
 #include <stdarg.h>
 #include <stdio.h>
 
-#include "constants.h"
+#define RX_BUFF_SIZE 500
+volatile unsigned char commandBuff[RX_BUFF_SIZE] = {'\0'};
+volatile unsigned char *r = commandBuff; // reading from the command buffer
+volatile unsigned char *p = commandBuff; // writing to the command buffer
 
 /* As outlined by the documentation */
 void usartInit() {
-  UBRR0 = 0; // reset
+  // reset
+  UBRR0 = 0;
+  UCSR0B = 0;
+  UCSR0C = 0;
 
-  /* Set baud rate */
+  // Set baud rate
   UBRR0L = (unsigned char)UBRR_FROM_BAUD;
   UBRR0H = (unsigned char)(UBRR_FROM_BAUD >> 8);
 
-  /* Enable receiver and transmitter */
-  UCSR0B = (1 << RXEN0) | (1 << TXEN0);
+  // Enable receiver and transmitter and receiver interrupt
+  UCSR0B = (1 << RXEN0) | (1 << TXEN0) | (1 << RXCIE0);
 
-  /* Set frame format: 8data, 2stop bit */
-  UCSR0C = (1 << USBS0) | (3 << UCSZ00);
+  // UCSZn2:0 bits select number of data bits in the frame
+  // UPMn1:0 bits enable and set the type of parity bit
+  // USBSn bit selects between one or two stop bits blank for 1 stop bit
+  // Set frame format: 8data, 1stop bit -> set by bluetooth module
+  UCSR0C = (3 << UCSZ00);
 
   UBRR0 = UBRR_FROM_BAUD;
 }
@@ -54,4 +65,13 @@ void uartPrintf(const char *format, ...) {
   vsprintf(out, format, args);
   va_end(args);
   uartPrint(out);
+}
+
+ISR(USART_RX_vect) {
+  cli(); // disable interrupts
+  if ((p - commandBuff) >= RX_BUFF_SIZE - 1) {
+    p = commandBuff; // round robin
+  }
+  *p++ = UDR0;
+  sei(); // enable interrupts
 }
