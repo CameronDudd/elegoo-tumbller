@@ -18,6 +18,8 @@ static void _runAllTests(void) {
   RUN_TEST_GROUP(mpu6050Tests);
   printf("\nSerial Tests:    ");
   RUN_TEST_GROUP(serialTests);
+  printf("\nTimer Tests:     ");
+  RUN_TEST_GROUP(timerTests);
 }
 
 int main(int argc, const char *argv[]) {
