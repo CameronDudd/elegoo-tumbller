@@ -7,6 +7,6 @@
 #define LED_H
 
 void initLED();
-void toggleLED();
+void toggleOnBoardLED();
 
 #endif  // LED_H
