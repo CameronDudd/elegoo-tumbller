@@ -12,9 +12,10 @@
 #endif
 
 void initLED() {
-  // initialise ports to zero (input)
+  // initialise data direction registers to zero (input)
   DDRB = 0;
   DDRD = 0;
+  // initialise ports to zero
   PORTB = 0;
   PORTD = 0;
 
