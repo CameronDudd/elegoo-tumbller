@@ -9,6 +9,7 @@
 #ifdef UNIT_TEST
 #include "mock_avr_io.h"
 #else
+#include <avr/delay.h>
 #include <avr/interrupt.h>
 #include <avr/io.h>
 #endif
@@ -25,6 +26,7 @@ volatile unsigned char *p = uartRxBuff; // writing to the command buffer
 void usartInit() {
   // reset
   UBRR0 = 0;
+  UCSR0A = 0;
   UCSR0B = 0;
   UCSR0C = 0;
 
@@ -51,7 +53,9 @@ static void _uartTransmit(unsigned char data) {
   UDR0 = data; // put data into the buffer
 }
 
-unsigned char _uartReceive() {
+unsigned int serialAvailable() { return (UCSR0A & (1 << RXC0)) ? 1 : 0; }
+
+unsigned char uartReceive() {
   while (!(UCSR0A & (1 << RXC0))) {
   }
   return UDR0;
@@ -59,9 +63,9 @@ unsigned char _uartReceive() {
 
 void uartPrint(const char *str) {
   while (*str != '\0') {
-    _uartTransmit(*str);
-    str++;
+    _uartTransmit(*str++);
   }
+  _delay_ms(10); // Add a small delay after sending data
 }
 
 void uartPrintf(const char *format, ...) {

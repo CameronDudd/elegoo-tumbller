@@ -11,5 +11,7 @@ extern volatile unsigned char *r;
 void usartInit();
 void uartPrint(const char *str);
 void uartPrintf(const char *format, ...);
+unsigned int serialAvailable();
+unsigned char uartReceive();
 
 #endif  // SERIAL_H

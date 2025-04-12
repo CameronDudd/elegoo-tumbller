@@ -10,8 +10,12 @@
 #include "serial.h"
 #include "timer.h"
 #include "vectors.h"
+#include <util/delay.h>
 
 int main() {
+  // Give everything a second to stabilise (especially Bluetooth module)
+  _delay_ms(1000);
+
   // Setup serial
   usartInit();
   uartPrint("+ serial initialised\r\n");

@@ -11,6 +11,8 @@
 #define SCL_CLOCK 100000L  // 100kHz
 
 // Asynchronous normal mode (U2Xn = 0)
+// 9600 -> 103
+// 115200 -> 8
 #define UBRR_FROM_BAUD (uint16_t)103  // ( F_CPU / (16 * BAUD) ) - 1 = 103.16r error 0.2%
 
 #endif  // CONSTANTS_H

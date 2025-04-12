@@ -2,7 +2,7 @@ CC = gcc
 AVR_CC = avr-gcc
 OBJCOPY = avr-objcopy
 AVRDUDE = avrdude
-CFLAGS = -Wall -Wextra -g -std=c99 -DUNITY_OUTPUT_COLOR
+CFLAGS = -Wall -Wextra -O2 -std=c99 -DUNITY_OUTPUT_COLOR
 LDFLAGS = -Wl,-u,vfprintf -lprintf_flt -lm
 MCU = atmega328p
 F_CPU = 16000000UL

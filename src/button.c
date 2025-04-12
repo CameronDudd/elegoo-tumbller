@@ -15,7 +15,7 @@
 #define DEBOUNCE_STATE_MS 500
 
 State state = STDBY;
-volatile static unsigned long lastPressed = 0;
+static volatile unsigned long lastPressed = 0;
 
 void initButtons() {
   PCMSK0 |= (1 << PCINT2); // Enable PCINT2 (D10 button)
