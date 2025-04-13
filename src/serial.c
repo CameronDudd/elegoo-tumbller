@@ -7,6 +7,7 @@
 #include "constants.h"
 
 #ifdef UNIT_TEST
+#include "mock_avr_delay.h"
 #include "mock_avr_io.h"
 #else
 #include <avr/delay.h>
