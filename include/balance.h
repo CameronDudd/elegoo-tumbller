@@ -3,10 +3,10 @@
  *   All rights reserved.
  */
 
-#include "vectors.h"
-
 #ifndef BALANCE_H
 #define BALANCE_H
+
+#include "vectors.h"
 
 double pitchPID(vec3 *accel, vec3 *gyro, double *desiredPitch);
 
