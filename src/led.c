@@ -4,7 +4,6 @@
  */
 
 #include "led.h"
-#include "serial.h"
 
 #ifdef UNIT_TEST
 #include "mock_avr_io.h"
@@ -60,8 +59,31 @@ void toggleOnBoardLED() { PORTB ^= (1 << PB5); }
  *
  */
 
-static void _sendByte(uint8_t byte) { // TODO (cameron): implement
-  uartPrintf("%i\r\n", byte);
+static inline void _sendZero(void) __attribute__((always_inline));
+static inline void _sendZero(void) {
+  PORTB |= (1 << PB0);                                    // PULL HIGH
+  __asm__ __volatile__("nop\nnop\nnop\nnop\nnop\nnop\n"); // T0H
+  PORTB &= ~(1 << PB0);                                   // PULL LOW
+  __asm__ __volatile__(                                   // TOL
+      "nop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\n"
+      "nop\nnop\nnop\n");
+}
+
+static inline void _sendOne(void) __attribute__((always_inline));
+static inline void _sendOne(void) {
+  PORTB |= (1 << PB0);  // PULL HIGH
+  __asm__ __volatile__( // T1H
+      "nop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\n"
+      "nop\nnop\nnop\n");
+  PORTB &= ~(1 << PB0);                                   // PULL LOW
+  __asm__ __volatile__("nop\nnop\nnop\nnop\nnop\nnop\n"); // T1L
+}
+
+static inline void _sendByte(uint8_t byte) __attribute__((always_inline));
+static inline void _sendByte(uint8_t byte) {
+  for (int i = 7; i >= 0; i--) {
+    ((byte & (1 << i)) == 1) ? _sendOne() : _sendZero();
+  }
 }
 
 void colorReset() {}
