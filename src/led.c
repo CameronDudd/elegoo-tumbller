@@ -6,11 +6,39 @@
 #include "led.h"
 
 #ifdef UNIT_TEST
+#include "mock_avr_delay.h"
 #include "mock_avr_io.h"
 #else
+#include "avr/delay.h"
 #include <avr/interrupt.h>
 #include <avr/io.h>
 #endif
+
+const Color COLOR_LED_OFF = {
+    .r = HEX_LED_OFF,
+    .g = HEX_LED_OFF,
+    .b = HEX_LED_OFF,
+};
+const Color COLOR_LED_WHITE = {
+    .r = HEX_LED_MAX,
+    .g = HEX_LED_MAX,
+    .b = HEX_LED_MAX,
+};
+const Color COLOR_LED_RED = {
+    .r = HEX_LED_MAX,
+    .g = HEX_LED_OFF,
+    .b = HEX_LED_OFF,
+};
+const Color COLOR_LED_GREEN = {
+    .r = HEX_LED_OFF,
+    .g = HEX_LED_MAX,
+    .b = HEX_LED_OFF,
+};
+const Color COLOR_LED_BLUE = {
+    .r = HEX_LED_OFF,
+    .g = HEX_LED_OFF,
+    .b = HEX_LED_MAX,
+};
 
 void initLED() {
   // initialise data direction registers to zero (input)
@@ -59,10 +87,10 @@ void toggleOnBoardLED() { PORTB ^= (1 << PB5); }
  *
  */
 
-#define TSMALL __asm__ __volatile__("nop\nnop\nnop\nnop")
+#define TSMALL __asm__ __volatile__("nop\nnop\nnop\n")
 #define TLARGE                                                                 \
-  __asm__ __volatile__("nop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\nnop" \
-                       "\nnop\n")
+  __asm__ __volatile__(                                                        \
+      "nop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\n")
 
 static inline void _sendZero(void) __attribute__((always_inline));
 static inline void _sendZero(void) {
@@ -87,12 +115,26 @@ static inline void _sendByte(uint8_t byte) {
   }
 }
 
-void colorReset() {}
+void colorReset() {
+  PORTD &= ~(1 << PD3);
+  _delay_us(100);
+}
 
-void sendColor(Color *color) {
+void sendColor(Color color) {
   cli();
-  _sendByte(color->g);
-  _sendByte(color->r);
-  _sendByte(color->b);
+  _sendByte(color.g);
+  _sendByte(color.r);
+  _sendByte(color.b);
   sei();
+}
+
+void sendColors(const Color *colors, size_t numColors) {
+  if (numColors == 0) {
+    return;
+  }
+  const Color *end = colors + numColors;
+  for (; colors < end; ++colors) {
+    sendColor(*colors);
+  }
+  colorReset();
 }
