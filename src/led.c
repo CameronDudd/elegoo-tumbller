@@ -59,30 +59,31 @@ void toggleOnBoardLED() { PORTB ^= (1 << PB5); }
  *
  */
 
+#define TSMALL __asm__ __volatile__("nop\nnop\nnop\nnop")
+#define TLARGE                                                                 \
+  __asm__ __volatile__("nop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\nnop" \
+                       "\nnop\n")
+
 static inline void _sendZero(void) __attribute__((always_inline));
 static inline void _sendZero(void) {
-  PORTB |= (1 << PB0);                                    // PULL HIGH
-  __asm__ __volatile__("nop\nnop\nnop\nnop\nnop\nnop\n"); // T0H
-  PORTB &= ~(1 << PB0);                                   // PULL LOW
-  __asm__ __volatile__(                                   // TOL
-      "nop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\n"
-      "nop\nnop\nnop\n");
+  PORTD |= (1 << PD3);  // PULL HIGH
+  TSMALL;               // T0H
+  PORTD &= ~(1 << PD3); // PULL LOW
+  TLARGE;               // TOL
 }
 
 static inline void _sendOne(void) __attribute__((always_inline));
 static inline void _sendOne(void) {
-  PORTB |= (1 << PB0);  // PULL HIGH
-  __asm__ __volatile__( // T1H
-      "nop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\n"
-      "nop\nnop\nnop\n");
-  PORTB &= ~(1 << PB0);                                   // PULL LOW
-  __asm__ __volatile__("nop\nnop\nnop\nnop\nnop\nnop\n"); // T1L
+  PORTD |= (1 << PD3);  // PULL HIGH
+  TLARGE;               // T1H
+  PORTD &= ~(1 << PD3); // PULL LOW
+  TSMALL;               // T1L
 }
 
 static inline void _sendByte(uint8_t byte) __attribute__((always_inline));
 static inline void _sendByte(uint8_t byte) {
   for (int i = 7; i >= 0; i--) {
-    ((byte & (1 << i)) == 1) ? _sendOne() : _sendZero();
+    ((byte & (1 << i))) ? _sendOne() : _sendZero();
   }
 }
 
