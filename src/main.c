@@ -5,6 +5,7 @@
 
 #include "balance.h"
 #include "button.h"
+#include "led.h"
 #include "motor.h"
 #include "mpu6050.h"
 #include "serial.h"
@@ -15,6 +16,9 @@
 int main() {
   // Give everything a second to stabilise (especially Bluetooth module)
   _delay_ms(1000);
+
+  // First thing to setup to allow display of error codes
+  initLED();
 
   // Setup serial
   usartInit();
