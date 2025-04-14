@@ -3,7 +3,7 @@
  *   All rights reserved.
  */
 
-#include "error.h"
+#include "state.h"
 
 void ledShowError(const Color moduleColor, const uint8_t statusCode) {
   const Color colors[4] = {
