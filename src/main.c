@@ -11,7 +11,12 @@
 #include "serial.h"
 #include "timer.h"
 #include "vectors.h"
+
+#ifdef UNIT_TEST
+#include "mock_avr_delay.h"
+#else
 #include <util/delay.h>
+#endif
 
 int main() {
   // Give everything a second to stabilise (especially Bluetooth module)

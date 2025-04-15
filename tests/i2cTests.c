@@ -15,7 +15,8 @@ TEST_GROUP(i2cTests);
 TEST_SETUP(i2cTests) {
   TWSR = INIT_MEM;
   TWBR = INIT_MEM;
-  TWCR = INIT_MEM;  // bit TWINT (7) on TWCR must be set or while loops will go on forever
+  // bit TWINT (7) on TWCR must be set or while loops will go on forever
+  TWCR = INIT_MEM;
   TWDR = INIT_MEM;
 }
 

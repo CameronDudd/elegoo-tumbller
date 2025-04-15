@@ -10,9 +10,9 @@
 #include "mock_avr_delay.h"
 #include "mock_avr_io.h"
 #else
-#include <avr/delay.h>
 #include <avr/interrupt.h>
 #include <avr/io.h>
+#include <util/delay.h>
 #endif
 
 #include <stdarg.h>

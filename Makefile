@@ -1,72 +1,91 @@
-CC = gcc
-AVR_CC = avr-gcc
+# == Toolchain ==
+CC      = gcc
+AVR_CC  = avr-gcc
 OBJCOPY = avr-objcopy
 AVRDUDE = avrdude
-CFLAGS = -Wall -Wextra -O2 -std=c99 -DUNITY_OUTPUT_COLOR
+
+# == Flags ==
+CFLAGS  = -Wall -Wextra -O2 -std=c99 -DUNITY_OUTPUT_COLOR -D__USE_MISC
 LDFLAGS = -Wl,-u,vfprintf -lprintf_flt -lm
-MCU = atmega328p
+
+# == MCU Config ==
+MCU   = atmega328p
 F_CPU = 16000000UL
+PORT  = /dev/ttyUSB0
+BAUD  = 115200
 
-SRCDIR = src
-INCDIR = include
-BUILDDIR = build
+# == Directories ==
+SRCDIR    = src
+MODULEDIR = $(SRCDIR)/modules
+INCDIR    = include
+BUILDDIR  = build
 BACKUPDIR = backup
-LIBDIR = lib
-TESTDIR = tests
-MOCKDIR = mocks
-AVRDIR = $(LIBDIR)/avr-libc
-UNITYDIR = $(LIBDIR)/unity
+LIBDIR    = lib
+TESTDIR   = tests
+MOCKDIR   = mocks
+UNITYDIR  = $(LIBDIR)/unity
 UNITYFIXTUREDIR = $(UNITYDIR)/extras/fixture
-UNITYMEMORYDIR = $(UNITYDIR)/extras/memory
+UNITYMEMORYDIR  = $(UNITYDIR)/extras/memory
 
-TARGET = main
-PORT = /dev/ttyUSB0
-BAUD = 115200
-
-SRC = $(wildcard $(SRCDIR)/*.c)
-
-SRCTESTS = $(wildcard $(TESTDIR)/*.c)             \
-		   $(wildcard $(MOCKDIR)/*.c)             \
-		   $(wildcard $(UNITYDIR)/src/*.c)        \
-		   $(wildcard $(UNITYMEMORYDIR)/src/*.c)  \
-		   $(wildcard $(UNITYFIXTUREDIR)/src/*.c)
-
-OBJ = $(patsubst $(SRCDIR)/%.c, $(BUILDDIR)/%.o, $(SRC))
-
-INCLUDES = -I$(INCDIR) -I/usr/avr/include
-TESTINCLUDES = -I$(INCDIR) -I$(MOCKDIR) -I$(UNITYDIR)/src -I$(UNITYFIXTUREDIR)/src -I$(UNITYMEMORYDIR)/src
-
-TARGET_ELF = $(BUILDDIR)/$(TARGET).elf
-TARGET_HEX = $(BUILDDIR)/$(TARGET).hex
+# == Target Definitions ==
+TARGET      = main
+TARGET_ELF  = $(BUILDDIR)/$(TARGET).elf
+TARGET_HEX  = $(BUILDDIR)/$(TARGET).hex
 TARGET_TEST = $(BUILDDIR)/test
 
+# == Sources ==
+SRC        = $(wildcard $(SRCDIR)/*.c)
+SRCMODULES = $(wildcard $(MODULEDIR)/*.c)
+SRCTESTS   = $(wildcard $(TESTDIR)/*.c) \
+             $(wildcard $(MOCKDIR)/*.c) \
+             $(wildcard $(UNITYDIR)/src/*.c) \
+             $(wildcard $(UNITYFIXTUREDIR)/src/*.c) \
+             $(wildcard $(UNITYMEMORYDIR)/src/*.c)
+
+# == Object files ==
+OBJ  = $(patsubst %.c, $(BUILDDIR)/%.o, $(subst $(SRCDIR)/,,$(SRC)))
+OBJ += $(patsubst %.c, $(BUILDDIR)/%.o, $(subst $(SRCDIR)/,,$(SRCMODULES)))
+
+# == Includes ==
+INCLUDES     = -I$(INCDIR) -I/usr/avr/include
+TESTINCLUDES = -I$(INCDIR) -I/usr/include -I$(MOCKDIR) \
+               -I$(UNITYDIR)/src -I$(UNITYFIXTUREDIR)/src -I$(UNITYMEMORYDIR)/src
+
+# == Targets ==
 all: $(BUILDDIR) $(TARGET_ELF) $(TARGET_HEX) test
 
 $(TARGET_ELF): $(OBJ)
 	$(AVR_CC) -mmcu=$(MCU) $(CFLAGS) $(OBJ) -o $@ $(LDFLAGS)
 
+# == Object Compilation Rules ==
 $(BUILDDIR)/%.o: $(SRCDIR)/%.c
+	@mkdir -p $(dir $@)
 	$(AVR_CC) -mmcu=$(MCU) $(CFLAGS) $(INCLUDES) -DF_CPU=$(F_CPU) -c $< -o $@
 
+# == Hex Generation ==
 $(TARGET_HEX): $(TARGET_ELF)
-	$(OBJCOPY) -O ihex -R .eeprom $(TARGET_ELF) $(TARGET_HEX)
+	$(OBJCOPY) -O ihex -R .eeprom $< $@
 
-flash: $(BUILDDIR) $(TARGET_HEX)
-	$(AVRDUDE) -c arduino -p m328p -P $(PORT) -b $(BAUD) -U flash:w:$(TARGET_HEX)
-
-flash-original:
-	$(AVRDUDE) -c arduino -p m328p -P $(PORT) -b $(BAUD) -U flash:w:$(BACKUPDIR)/original_backup.hex
-
+# == Directory Setup ==
 $(BUILDDIR):
 	mkdir -p $(BUILDDIR)
 
-clean:
-	rm -rf $(BUILDDIR) $(TARGET_ELF) $(TARGET_HEX)
+# == Flashing ==
+flash: $(TARGET_HEX)
+	$(AVRDUDE) -c arduino -p $(MCU) -P $(PORT) -b $(BAUD) -U flash:w:$<
 
+flash-original:
+	$(AVRDUDE) -c arduino -p $(MCU) -P $(PORT) -b $(BAUD) -U flash:w:$(BACKUPDIR)/original_backup.hex
+
+# == Unit Testing ==
 test: $(BUILDDIR)
-	$(CC) $(CFLAGS) -DUNIT_TEST $(TESTINCLUDES) $(SRCTESTS) src/led.c src/i2c.c src/motor.c src/mpu6050.c src/serial.c src/timer.c -o $(TARGET_TEST)
+	$(CC) $(CFLAGS) -DUNIT_TEST $(TESTINCLUDES) $(SRCTESTS) $(SRCMODULES) -o $(TARGET_TEST) -lm
 	./$(TARGET_TEST)
 
 tests: test
 
-.PHONY: all flash flash-original clean test
+# == Clean ==
+clean:
+	rm -rf $(BUILDDIR) $(TARGET_ELF) $(TARGET_HEX) $(TARGET_TEST)
+
+.PHONY: all flash flash-original clean test tests

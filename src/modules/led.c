@@ -4,46 +4,22 @@
  */
 
 #include "led.h"
+#include "color.h"
 
 #ifdef UNIT_TEST
 #include "mock_avr_delay.h"
 #include "mock_avr_io.h"
 #else
-#include "avr/delay.h"
 #include <avr/interrupt.h>
 #include <avr/io.h>
+#include <util/delay.h>
 #endif
-
-const Color COLOR_LED_OFF = {
-    .r = HEX_LED_OFF,
-    .g = HEX_LED_OFF,
-    .b = HEX_LED_OFF,
-};
-const Color COLOR_LED_WHITE = {
-    .r = HEX_LED_MAX,
-    .g = HEX_LED_MAX,
-    .b = HEX_LED_MAX,
-};
-const Color COLOR_LED_RED = {
-    .r = HEX_LED_MAX,
-    .g = HEX_LED_OFF,
-    .b = HEX_LED_OFF,
-};
-const Color COLOR_LED_GREEN = {
-    .r = HEX_LED_OFF,
-    .g = HEX_LED_MAX,
-    .b = HEX_LED_OFF,
-};
-const Color COLOR_LED_BLUE = {
-    .r = HEX_LED_OFF,
-    .g = HEX_LED_OFF,
-    .b = HEX_LED_MAX,
-};
 
 void initLED() {
   // initialise data direction registers to zero (input)
   DDRB = 0;
   DDRD = 0;
+
   // initialise ports to zero
   PORTB = 0;
   PORTD = 0;
@@ -120,7 +96,7 @@ void colorReset() {
   _delay_us(100);
 }
 
-void sendColor(Color color) {
+void sendColor(Color8 color) {
   cli();
   _sendByte(color.g);
   _sendByte(color.r);
@@ -128,13 +104,29 @@ void sendColor(Color color) {
   sei();
 }
 
-void sendColors(const Color *colors, size_t numColors) {
+void sendColors(const Color8 *colors, const size_t numColors) {
   if (numColors == 0) {
     return;
   }
-  const Color *end = colors + numColors;
+  const Color8 *end = colors + numColors;
   for (; colors < end; ++colors) {
     sendColor(*colors);
   }
   colorReset();
+}
+
+void flashColors(const Color8 *colors, const size_t numColors,
+                 uint8_t numTimes) {
+  Color8 colorsOff[4] = {
+      COLOR_OFF,
+      COLOR_OFF,
+      COLOR_OFF,
+      COLOR_OFF,
+  };
+  for (; numTimes > 0; --numTimes) {
+    sendColors(colors, numColors);
+    _delay_ms(1000);
+    sendColors(colorsOff, 4);
+    _delay_ms(1000);
+  }
 }
