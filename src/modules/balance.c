@@ -6,6 +6,7 @@
 #include "balance.h"
 #include "motor.h"
 
+#define __USE_MISC
 #include <math.h>
 
 #define KP 12.5

@@ -5,7 +5,7 @@ OBJCOPY = avr-objcopy
 AVRDUDE = avrdude
 
 # == Flags ==
-CFLAGS  = -Wall -Wextra -O2 -std=c99 -DUNITY_OUTPUT_COLOR -D__USE_MISC
+CFLAGS  = -Wall -Wextra -O2 -std=c99 -DUNITY_OUTPUT_COLOR
 LDFLAGS = -Wl,-u,vfprintf -lprintf_flt -lm
 
 # == MCU Config ==
