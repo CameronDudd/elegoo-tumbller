@@ -6,7 +6,7 @@
 #include "mock_avr_io.h"
 
 uint8_t interruptsEnabled = 0;
-int numInterruptsTriggered = 0;
+uint8_t numInterruptsTriggered = 0;
 void cli() { interruptsEnabled = 0; };
 void sei() { interruptsEnabled = 1; };
 

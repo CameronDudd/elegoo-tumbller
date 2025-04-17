@@ -772,6 +772,9 @@ extern volatile uint8_t UDR0;
 #define UDR0_6 6
 #define UDR0_7 7
 
+extern uint8_t interruptsEnabled;
+extern uint8_t numInterruptsTriggered;
+
 void sei();
 void cli();
 
