@@ -5,12 +5,13 @@
 
 #include "mock_avr_io.h"
 #include "motor.h"
-#include "tests.h"
 #include "timer.h"
 #include "unity.h"
 #include "unity_fixture.h"
 
 extern uint8_t interruptsEnabled;
+extern void INT0_vect();
+extern void PCINT2_vect();
 
 TEST_GROUP(motorTests);
 
@@ -32,6 +33,8 @@ TEST_SETUP(motorTests) {
   OCR1A = 0xFF;
   OCR1B = 0xFF;
   TIMSK1 = 0x00;
+  leftWheelPulses = 0;
+  rightWheelPulses = 0;
   interruptsEnabled = 0;
 }
 
@@ -124,11 +127,31 @@ TEST(motorTests, stop) {
   TEST_ASSERT_EQUAL_UINT8(0b00000000, OCR0B);
 }
 
-TEST(motorTests, ISR_INT0_vect){SKIP}
+TEST(motorTests, ISR_INT0_vect) {
+  TEST_ASSERT_EQUAL(0, interruptsEnabled);
+  INT0_vect();
+  TEST_ASSERT_EQUAL(1, leftWheelPulses);
+  INT0_vect();
+  TEST_ASSERT_EQUAL(2, leftWheelPulses);
+  INT0_vect();
+  TEST_ASSERT_EQUAL(3, leftWheelPulses);
+  INT0_vect();
+  TEST_ASSERT_EQUAL(4, leftWheelPulses);
+  TEST_ASSERT_EQUAL(1, interruptsEnabled);
+}
 
-TEST(motorTests, ISR_PCINT2_vect){SKIP}
-
-TEST(motorTests, ISR_TIMER1_COMPA_vect){SKIP}
+TEST(motorTests, ISR_PCINT2_vect) {
+  TEST_ASSERT_EQUAL(0, interruptsEnabled);
+  PCINT2_vect();
+  TEST_ASSERT_EQUAL(1, rightWheelPulses);
+  PCINT2_vect();
+  TEST_ASSERT_EQUAL(2, rightWheelPulses);
+  PCINT2_vect();
+  TEST_ASSERT_EQUAL(3, rightWheelPulses);
+  PCINT2_vect();
+  TEST_ASSERT_EQUAL(4, rightWheelPulses);
+  TEST_ASSERT_EQUAL(1, interruptsEnabled);
+}
 
 TEST_GROUP_RUNNER(motorTests) {
   RUN_TEST_CASE(motorTests, initPWM);
@@ -142,5 +165,4 @@ TEST_GROUP_RUNNER(motorTests) {
   RUN_TEST_CASE(motorTests, stop);
   RUN_TEST_CASE(motorTests, ISR_INT0_vect);
   RUN_TEST_CASE(motorTests, ISR_PCINT2_vect);
-  RUN_TEST_CASE(motorTests, ISR_TIMER1_COMPA_vect);
 }
