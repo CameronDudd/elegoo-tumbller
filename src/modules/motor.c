@@ -11,8 +11,8 @@
 #include <avr/interrupt.h>
 #endif
 
-volatile unsigned long leftWheelPulses;
-volatile unsigned long rightWheelPulses;
+volatile unsigned long leftWheelPulses = 0;
+volatile unsigned long rightWheelPulses = 0;
 
 // TODO (cameron): better comments / documentation
 
