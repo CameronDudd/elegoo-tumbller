@@ -4,10 +4,12 @@
  */
 
 #include "balance.h"
-#include "motor.h"
-
-#define __USE_MISC
+#include "timer.h"
 #include <math.h>
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
 
 #define KP 12.5
 #define KI 0.0
