@@ -6,8 +6,6 @@
 #ifndef BALANCE_H
 #define BALANCE_H
 
-#include "vectors.h"
-
-double pitchPID(vec3 *accel, vec3 *gyro, double *desiredPitch);
+double pitchPID(double *pitch, double *desiredPitch, double *dt);
 
 #endif  // BALANCE_H
