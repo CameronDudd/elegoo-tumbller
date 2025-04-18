@@ -48,9 +48,9 @@ float updateKalmanFilter(Kalman_t *kf, vec3 *accel, vec3 *gyro, float *dt) {
   float P01_temp = kf->P[0][1];
 
   kf->P[0][0] -= K0 * P00_temp;
-  kf->P[0][0] -= K0 * P01_temp;
-  kf->P[0][0] -= K1 * P00_temp;
-  kf->P[0][0] -= K1 * P01_temp;
+  kf->P[0][1] -= K0 * P01_temp;
+  kf->P[1][0] -= K1 * P00_temp;
+  kf->P[1][1] -= K1 * P01_temp;
 
   return kf->angle;
 }
