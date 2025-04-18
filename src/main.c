@@ -5,6 +5,7 @@
 
 #include "balance.h"
 #include "button.h"
+#include "kalman.h"
 #include "led.h"
 #include "motor.h"
 #include "mpu6050.h"
@@ -53,12 +54,26 @@ int main() {
   configureGyrometer(RANGE_250);    // +/- 250 º/s over 16bit range
   uartPrintf("+ accelerometers configured to +/- 2g\r\n");
 
+  // Setup Kalman filter and state
+  Kalman_t kf;
+  initKalmanFilter(&kf);
+
   double desiredAngle = 0.0, balancingPower = 0.0;
   vec3 accel, gyro;
+
+  static unsigned long lastMillis = 0;
   while (1) {
+    double dt = (millis - lastMillis) / 1000.0;
+    lastMillis = millis;
+    if (dt <= 0) {
+      dt = 0.001;
+    }
+
     readGyrometer(&gyro);
     readAccelerometer(&accel);
-    balancingPower = pitchPID(&accel, &gyro, &desiredAngle);
+    double pitch = updateKalmanFilter(&kf, &accel, &gyro, &dt);
+    balancingPower = pitchPID(&pitch, &desiredAngle, &dt);
+
     if (accel.z < 0.01) {
       balancingPower = 0;
     } else if (balancingPower < 0) {
@@ -67,11 +82,7 @@ int main() {
     } else {
       reverse();
     }
-    balancingPower *= (255.0 / 90.0);
-    if (balancingPower > 255) {
-      balancingPower = 255;
-    }
-    uartPrintf("state=%i %f\r\n", state, balancingPower);
+
     setSpeed((state == BALANCE) ? balancingPower : 0);
   }
 
