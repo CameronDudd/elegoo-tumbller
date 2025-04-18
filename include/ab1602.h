@@ -15,11 +15,11 @@ typedef enum {
   BAUD_115200 = 5,
 } BTBaud;
 
-void BTSoftwareVersion();
-void BTDeviceName();
-void BTSetDeviceName(const char *name);
-void BTSerialBaudRate();
-void BTSetSerialBaudRate(BTBaud baud);
-void BTReset();
+void ATSoftwareVersionCheck();
+void ATDeviceNameCheck();
+void ATSetDeviceName(const char *name);
+void ATSerialBaudRateCheck();
+void ATSetSerialBaudRate(BTBaud baud);
+void ATReset();
 
 #endif  // AB1602_H
