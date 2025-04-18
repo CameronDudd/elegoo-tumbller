@@ -4,7 +4,9 @@
  */
 
 #include "led.h"
+#include "mock_avr_delay.h"
 #include "mock_avr_io.h"
+#include "tests.h"
 #include "unity.h"
 #include "unity_fixture.h"
 
@@ -25,7 +27,7 @@ TEST(ledTests, initLED) {
   TEST_ASSERT_EQUAL_UINT8(0b00001000, DDRD);
 }
 
-TEST(ledTests, toggleLED) {
+TEST(ledTests, toggleOnBoardLED) {
   TEST_ASSERT_EQUAL_UINT8(0b11111111, PORTB);
   toggleOnBoardLED();
   TEST_ASSERT_EQUAL_UINT8(0b11011111, PORTB);
@@ -35,7 +37,23 @@ TEST(ledTests, toggleLED) {
   TEST_ASSERT_EQUAL_UINT8(0b11011111, PORTB);
 }
 
+TEST(ledTests, sendColorLEDReset) {
+  sendColorLEDReset();
+  TEST_ASSERT_EQUAL_DOUBLE(100, total_us_delay);
+  TEST_ASSERT_EQUAL_UINT8(0b11110111, PORTD);
+}
+
+TEST(ledTests, sendLEDColor){SKIP}
+
+TEST(ledTests, sendLEDColors){SKIP}
+
+TEST(ledTests, flashLEDColors){SKIP}
+
 TEST_GROUP_RUNNER(ledTests) {
   RUN_TEST_CASE(ledTests, initLED);
-  RUN_TEST_CASE(ledTests, toggleLED);
+  RUN_TEST_CASE(ledTests, toggleOnBoardLED);
+  RUN_TEST_CASE(ledTests, sendColorLEDReset);
+  RUN_TEST_CASE(ledTests, sendLEDColor);
+  RUN_TEST_CASE(ledTests, sendLEDColors);
+  RUN_TEST_CASE(ledTests, flashLEDColors);
 }
