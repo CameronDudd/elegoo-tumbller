@@ -20,8 +20,8 @@
 #endif
 
 int main() {
-  // Give everything a second to stabilise (especially Bluetooth module)
-  _delay_ms(1000);
+  // Give everything 300ms to stabilise (especially Bluetooth module)
+  _delay_ms(300);
 
   // First thing to setup to allow display of error codes
   initLED();
