@@ -91,12 +91,12 @@ static inline void _sendByte(uint8_t byte) {
   }
 }
 
-void colorReset() {
+void sendColorLEDReset() {
   PORTD &= ~(1 << PD3);
   _delay_us(100);
 }
 
-void sendColor(Color8 color) {
+void sendLEDColor(Color8 color) {
   cli();
   _sendByte(color.g);
   _sendByte(color.r);
@@ -104,19 +104,19 @@ void sendColor(Color8 color) {
   sei();
 }
 
-void sendColors(const Color8 *colors, const size_t numColors) {
+void sendLEDColors(const Color8 *colors, const size_t numColors) {
   if (numColors == 0) {
     return;
   }
   const Color8 *end = colors + numColors;
   for (; colors < end; ++colors) {
-    sendColor(*colors);
+    sendLEDColor(*colors);
   }
-  colorReset();
+  sendColorLEDReset();
 }
 
-void flashColors(const Color8 *colors, const size_t numColors,
-                 uint8_t numTimes) {
+void flashLEDColors(const Color8 *colors, const size_t numColors,
+                    uint8_t numTimes) {
   Color8 colorsOff[4] = {
       COLOR_OFF,
       COLOR_OFF,
@@ -124,9 +124,9 @@ void flashColors(const Color8 *colors, const size_t numColors,
       COLOR_OFF,
   };
   for (; numTimes > 0; --numTimes) {
-    sendColors(colors, numColors);
+    sendLEDColors(colors, numColors);
     _delay_ms(1000);
-    sendColors(colorsOff, 4);
+    sendLEDColors(colorsOff, 4);
     _delay_ms(1000);
   }
 }

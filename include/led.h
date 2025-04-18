@@ -13,9 +13,9 @@
 
 void initLED();
 void toggleOnBoardLED();
-void colorReset();
-void sendColor(Color8 color);
-void sendColors(const Color8 *colors, const size_t numColors);
-void flashColors(const Color8 *colors, const size_t numColors, uint8_t numTimes);
+void sendColorLEDReset();
+void sendLEDColor(Color8 color);
+void sendLEDColors(const Color8 *colors, const size_t numColors);
+void flashLEDColors(const Color8 *colors, const size_t numColors, uint8_t numTimes);
 
 #endif  // LED_H
