@@ -5,6 +5,10 @@
 
 #include "serial.h"
 #include "constants.h"
+#include "timer.h"
+
+#include <stdarg.h>
+#include <stdio.h>
 
 #ifdef UNIT_TEST
 #include "mock_avr_delay.h"
@@ -15,10 +19,7 @@
 #include <util/delay.h>
 #endif
 
-#include <stdarg.h>
-#include <stdio.h>
-
-#define RX_BUFF_SIZE 15
+#define RX_BUFF_SIZE 15 // TODO (cameron): implement?
 volatile unsigned char uartRxBuff[RX_BUFF_SIZE] = {'\0'};
 volatile unsigned char *r = uartRxBuff; // reading from the command buffer
 volatile unsigned char *p = uartRxBuff; // writing to the command buffer
@@ -60,6 +61,21 @@ unsigned char uartReceive() {
   while (!(UCSR0A & (1 << RXC0))) {
   }
   return UDR0;
+}
+
+void uartReceiveATResponse(char *buff, int buffSize) {
+  char *current = buff;
+  cli();
+  unsigned long startTs = millis;
+  sei();
+  while (((millis - startTs) < 1000) &&      // Timeout
+         ((current - buff) < (buffSize - 1)) // Overflow
+  ) { // TODO (cameron): Check for termination bytes ie \r\n, \r\nOK\r\n etc
+    if (UCSR0A & (1 << RXC0)) { // Character received
+      *current++ = UDR0;        // Read character
+    }
+  }
+  *current = '\0'; // Null terminated
 }
 
 void uartPrint(const char *str) {

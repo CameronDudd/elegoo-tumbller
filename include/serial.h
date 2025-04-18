@@ -13,5 +13,6 @@ void uartPrint(const char *str);
 void uartPrintf(const char *format, ...);
 unsigned int serialAvailable();
 unsigned char uartReceive();
+void uartReceiveATResponse(char *buff, int buffSize);
 
 #endif  // SERIAL_H
