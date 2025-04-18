@@ -24,7 +24,7 @@ void initKalmanFilter(Kalman_t *kf) {
   kf->R_measure = 0.03f;
 }
 
-float updateKalmanFilter(Kalman_t *kf, vec3 *accel, vec3 *gyro, double *dt) {
+float updateKalmanFilter(Kalman_t *kf, vec3 *accel, vec3 *gyro, float *dt) {
   kf->gyroRate = gyro->x - kf->gyroBias;
   kf->angle += *dt * kf->gyroRate;
 

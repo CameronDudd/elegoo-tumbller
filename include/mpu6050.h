@@ -96,7 +96,7 @@ void initMPU6050();
 void configureAccelerometer(ACCEL_CONFIG config);
 void configureGyrometer(GYRO_CONFIG config);
 void readAccelerometer(vec3* accel);
-void readTemperature(double* temp);
+void readTemperature(float* temp);
 void readGyrometer(vec3* gyro);
 
 #endif  // MPU6050_H

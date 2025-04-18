@@ -19,6 +19,6 @@ typedef struct {
 
 void initKalmanFilter(Kalman_t *kf);
 
-float updateKalmanFilter(Kalman_t *kf, vec3 *accel, vec3 *gyro, double *dt);
+float updateKalmanFilter(Kalman_t *kf, vec3 *accel, vec3 *gyro, float *dt);
 
 #endif  // KALMAN_H

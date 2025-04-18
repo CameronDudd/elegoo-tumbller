@@ -7,8 +7,8 @@
 
 #include "i2c.h"
 
-static double accelDivisor = 1;
-static double gyroDivisor = 1;
+static float accelDivisor = 1;
+static float gyroDivisor = 1;
 
 void initMPU6050() {
   i2cStart();
@@ -115,7 +115,7 @@ void readGyrometer(vec3 *gyro) {
 }
 
 // FIXME (cameron): temperature is currently broken
-void readTemperature(double *temp) {
+void readTemperature(float *temp) {
   i2cStart();                              // S
   i2cWrite((MPU6050_SLAVE_ADDR << 1) | 0); // AD+W
   // TODO (cameron): ACK
@@ -124,8 +124,8 @@ void readTemperature(double *temp) {
   i2cStart();                              // S
   i2cWrite((MPU6050_SLAVE_ADDR << 1) | 1); // AD+R
   // TODO (cameron): ACK
-  double tempOut =
-      (double)((i2cReadAck() << 8) | i2cReadNack()); // DATA, ACK, DATA, NACK
-  i2cStop();                                         // P
+  float tempOut =
+      (float)((i2cReadAck() << 8) | i2cReadNack()); // DATA, ACK, DATA, NACK
+  i2cStop();                                        // P
   *temp = ((tempOut / 340) + 36.53);
 };

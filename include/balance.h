@@ -6,6 +6,6 @@
 #ifndef BALANCE_H
 #define BALANCE_H
 
-double pitchPID(double *pitch, double *desiredPitch, double *dt);
+float pitchPID(float *pitch, float *desiredPitch, float *dt);
 
 #endif  // BALANCE_H

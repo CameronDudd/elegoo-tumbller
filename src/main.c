@@ -58,12 +58,12 @@ int main() {
   Kalman_t kf;
   initKalmanFilter(&kf);
 
-  double desiredAngle = 0.0, balancingPower = 0.0;
+  float desiredAngle = 0.0, balancingPower = 0.0;
   vec3 accel, gyro;
 
   static unsigned long lastMillis = 0;
   while (1) {
-    double dt = (millis - lastMillis) / 1000.0;
+    float dt = (millis - lastMillis) / 1000.0;
     lastMillis = millis;
     if (dt <= 0) {
       dt = 0.00001;
@@ -71,7 +71,7 @@ int main() {
 
     readGyrometer(&gyro);
     readAccelerometer(&accel);
-    double pitch = updateKalmanFilter(&kf, &accel, &gyro, &dt);
+    float pitch = updateKalmanFilter(&kf, &accel, &gyro, &dt);
     balancingPower = pitchPID(&pitch, &desiredAngle, &dt);
 
     if (accel.z < 0.01) {

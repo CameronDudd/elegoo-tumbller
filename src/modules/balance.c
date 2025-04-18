@@ -9,17 +9,17 @@
 #define KI 0.0
 #define KD 0.0
 
-double pitchPID(double *pitch, double *desiredPitch, double *dt) {
+float pitchPID(float *pitch, float *desiredPitch, float *dt) {
 
-  static double integralError = 0, previousError = 0;
+  static float integralError = 0, previousError = 0;
 
-  double error = *desiredPitch - *pitch;
+  float error = *desiredPitch - *pitch;
   integralError += (error * *dt);
 
-  double derivativeError = (error - previousError) / *dt;
+  float derivativeError = (error - previousError) / *dt;
   previousError = error;
 
-  double output = (KP * error) + (KI * integralError) + (KD * derivativeError);
+  float output = (KP * error) + (KI * integralError) + (KD * derivativeError);
 
   if (*pitch <= -75 || 75 <= *pitch)
     output = 0;
