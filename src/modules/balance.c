@@ -5,9 +5,10 @@
 
 #include "balance.h"
 
-#define KP 10.0
-#define KI 0.0
-#define KD 0.0
+// 16 0.01 0.2 - Seems reactive but also lets itself fall
+#define KP 16.0
+#define KI 0.01
+#define KD 0.2
 
 float pitchPID(float *pitch, float *desiredPitch, float *dt) {
 
