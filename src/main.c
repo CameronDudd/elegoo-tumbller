@@ -66,7 +66,7 @@ int main() {
     double dt = (millis - lastMillis) / 1000.0;
     lastMillis = millis;
     if (dt <= 0) {
-      dt = 0.001;
+      dt = 0.00001;
     }
 
     readGyrometer(&gyro);
