@@ -3,6 +3,7 @@
  *   All rights reserved.
  */
 
+#include "ab1602.h"
 #include "balance.h"
 #include "button.h"
 #include "kalman.h"
@@ -23,12 +24,21 @@ int main() {
   // Give everything 300ms to stabilise (especially Bluetooth module)
   _delay_ms(300);
 
+  initTimers();
+  uartPrint("+ timers ready\r\n");
+
   // First thing to setup to allow display of error codes
   initLED();
+  uartPrint("+ LEDs ready\r\n");
 
   // Setup serial
   usartInit();
   uartPrint("+ serial initialised\r\n");
+
+  // Setup Bluetooth - just run AT commands for now but want to check response
+  ATSoftwareVersionCheck();
+  ATDeviceNameCheck();
+  ATSerialBaudRateCheck();
 
   // Setup motors
   initPWM();
@@ -40,9 +50,6 @@ int main() {
   // Setup timed measurements
   initEncoders();
   uartPrintf("+ encoders ready\r\n");
-
-  initTimers();
-  uartPrintf("+ timers ready\r\n");
 
   initButtons();
   uartPrintf("+ buttons ready\r\n");
