@@ -63,11 +63,39 @@ unsigned char uartReceive() {
   return UDR0;
 }
 
-void uartReceiveATResponse(char *buff, int buffSize) {
-  char *current = buff;
+ATStatusFlag uartReceiveATAttr(const char *attr, char *buff, int buffSize) {
   cli();
   unsigned long startTs = millis;
   sei();
+  ATStatusFlag s = STATUS_NULL;
+  char c;
+  char *current = buff;
+  uartPrintf("AT+%s\r\n", attr);
+  while (s == STATUS_NULL) {
+    if ((millis - startTs) > 3000) {
+      s |= STATUS_TIMEOUT;
+    }
+    if ((current - buff) > (buffSize - 1)) {
+      s |= STATUS_OVERFLOW;
+    }
+    if (UCSR0A & (1 << RXC0)) { // Character received
+      c = UDR0;                 // Read character
+      *current++ = c;           // Put character into buffer
+      if (c == '\n') {          // Stop signal
+        s |= STATUS_OK;
+      }
+    }
+  }
+  *current = '\0'; // Null terminated
+  return s;
+}
+
+void uartReceiveATResponse(char *buff, int buffSize) {
+  // Response will be original command without the AT prefix
+  cli();
+  unsigned long startTs = millis;
+  sei();
+  char *current = buff;
   while (((millis - startTs) < 1000) &&      // Timeout
          ((current - buff) < (buffSize - 1)) // Overflow
   ) { // TODO (cameron): Check for termination bytes ie \r\n, \r\nOK\r\n etc

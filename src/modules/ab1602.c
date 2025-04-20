@@ -4,9 +4,11 @@
  */
 
 #include "ab1602.h"
-#include "serial.h"
+
 #include <stddef.h>
 #include <string.h>
+
+#include "serial.h"
 
 #ifdef UNIT_TEST
 #include "mock_avr_delay.h"
@@ -41,11 +43,9 @@ void ATSoftwareVersionCheck() {
    * +================+=============================+
    */
   _resetResvBuff();
-
   _delay_ms(50);
-  uartPrint("AT+VERSION\r\n");
-  uartReceiveATResponse(resvBuff, RECV_SIZE);
-  uartPrintf("%s", resvBuff);
+  uartReceiveATAttr("VERSION", resvBuff, RECV_SIZE);
+  uartPrintf("%s\r\n", resvBuff);
 }
 
 void ATDeviceNameCheck() {
@@ -57,12 +57,10 @@ void ATDeviceNameCheck() {
    * +=============+==================+
    */
   _resetResvBuff();
-
-  // name, up to 18 bytes, default BT16
   _delay_ms(50);
-  uartPrint("AT+NAME\r\n");
-  uartReceiveATResponse(resvBuff, RECV_SIZE);
-  uartPrintf("%s", resvBuff);
+  // name, up to 18 bytes, default BT16
+  uartReceiveATAttr("NAME", resvBuff, RECV_SIZE);
+  uartPrintf("%s\r\n", resvBuff);
 }
 
 void ATSetDeviceName(const char *name) {
@@ -74,9 +72,8 @@ void ATSetDeviceName(const char *name) {
    * +===================+========================+
    */
   _resetResvBuff();
-
-  // name, up to 19 bytes, default BT16
   _delay_ms(50);
+  // name, up to 19 bytes, default BT16
   uartPrintf("AT+NAME=%s\r\n", name);
   uartReceiveATResponse(resvBuff, RECV_SIZE);
   uartPrintf("%s", resvBuff);
@@ -91,11 +88,9 @@ void ATSerialBaudRateCheck() {
    * +==============+==================+
    */
   _resetResvBuff();
-
   _delay_ms(50);
-  uartPrint("AT+BAUD\r\n");
-  uartReceiveATResponse(resvBuff, RECV_SIZE);
-  uartPrintf("%s", resvBuff);
+  uartReceiveATAttr("BAUD", resvBuff, RECV_SIZE);
+  uartPrintf("%s\r\n", resvBuff);
 }
 
 void ATSetSerialBaudRate(BTBaud baud) {
@@ -107,7 +102,6 @@ void ATSetSerialBaudRate(BTBaud baud) {
    * +====================+========================+
    */
   _resetResvBuff();
-
   _delay_ms(50);
   uartPrintf("AT+BAUD=%i\r\n", baud);
   uartReceiveATResponse(resvBuff, RECV_SIZE);
@@ -123,7 +117,6 @@ void ATReset() {
    * +==============+==========+
    */
   _resetResvBuff();
-
   _delay_ms(50);
   uartPrint("AT+RESET\r\n");
   uartReceiveATResponse(resvBuff, RECV_SIZE);
