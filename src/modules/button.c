@@ -4,6 +4,7 @@
  */
 
 #include "button.h"
+#include "state.h"
 #include "timer.h"
 
 #ifdef UNIT_TEST
@@ -14,7 +15,6 @@
 
 #define DEBOUNCE_STATE_MS 500
 
-State state = STDBY;
 static volatile unsigned long lastPressed = 0;
 
 void initButtons() {

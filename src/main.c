@@ -11,6 +11,7 @@
 #include "motor.h"
 #include "mpu6050.h"
 #include "serial.h"
+#include "state.h"
 #include "timer.h"
 #include "vectors.h"
 
