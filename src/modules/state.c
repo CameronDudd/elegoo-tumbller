@@ -5,4 +5,4 @@
 
 #include "state.h"
 
-State state = BALANCE;
+State state = STDBY;
