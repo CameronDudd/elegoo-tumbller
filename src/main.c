@@ -98,17 +98,13 @@ int main() {
     rightWheelPulses = 0;
     uartPrintf("speed=%f\r\n", speed);
 
-    // 1. Outer loop: control speed -> get desired pitch
     desiredPitch = outputFromPID(&speedPIDCtx, speed, 0.0f, dt);
 
-    // Clamp to prevent over-correction
     if (desiredPitch > 10.0f) desiredPitch = 10.0f;
     if (desiredPitch < -10.0f) desiredPitch = -10.0f;
 
-    // 2. Inner loop: control pitch -> get motor power
     pitchPower = outputFromPID(&pitchPIDCtx, pitch, desiredPitch, dt);
 
-    // 3. Motor control logic
     if (accel.z < 0.01f) {
       pitchPower = 0;
       setSpeed(0);
