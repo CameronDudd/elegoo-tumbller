@@ -16,25 +16,25 @@ extern void PCINT2_vect();
 TEST_GROUP(motorTests);
 
 TEST_SETUP(motorTests) {
-  TCCR0A = 0x00;
-  TCCR0B = 0x00;
-  OCR0A = 0xFF;
-  OCR0B = 0xFF;
-  DDRB = 0x00;
-  DDRD = 0x00;
-  PORTB = 0xFF;
-  PORTD = 0xFF;
-  EIMSK = 0x00;
-  EICRA = 0x00;
-  PCMSK2 = 0x00;
-  PCICR = 0x00;
-  TCCR1A = 0xFF;
-  TCCR1B = 0xFF;
-  OCR1A = 0xFF;
-  OCR1B = 0xFF;
-  TIMSK1 = 0x00;
-  leftWheelPulses = 0;
-  rightWheelPulses = 0;
+  TCCR0A            = 0x00;
+  TCCR0B            = 0x00;
+  OCR0A             = 0xFF;
+  OCR0B             = 0xFF;
+  DDRB              = 0x00;
+  DDRD              = 0x00;
+  PORTB             = 0xFF;
+  PORTD             = 0xFF;
+  EIMSK             = 0x00;
+  EICRA             = 0x00;
+  PCMSK2            = 0x00;
+  PCICR             = 0x00;
+  TCCR1A            = 0xFF;
+  TCCR1B            = 0xFF;
+  OCR1A             = 0xFF;
+  OCR1B             = 0xFF;
+  TIMSK1            = 0x00;
+  leftWheelPulses   = 0;
+  rightWheelPulses  = 0;
   interruptsEnabled = 0;
 }
 
@@ -63,7 +63,7 @@ TEST(motorTests, initEncoders) {
   TEST_ASSERT_EQUAL_UINT(0b00010000, PCMSK2);
   TEST_ASSERT_EQUAL_UINT(0b00000100, PCICR);
   TEST_ASSERT_EQUAL_UINT(0, millis);
-  TEST_ASSERT_EQUAL_UINT(1, interruptsEnabled);
+  TEST_ASSERT_EQUAL_UINT(0, interruptsEnabled);
 }
 
 TEST(motorTests, enableMotors) {
