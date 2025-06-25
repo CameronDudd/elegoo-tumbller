@@ -2,6 +2,10 @@
  *   A huge thank you to Lauszus for their post on TKJ Electronics for help with
  *   implementing the Kalman filter for a balancing robot
  *   https://blog.tkjelectronics.dk/2012/09/a-practical-approach-to-kalman-filter-and-how-to-implement-it
+ *
+ *   Another thank you to automaticaddison for more help with filters and
+ *   balancing in general
+ *   https://automaticaddison.com/how-to-build-a-self-balancing-robot-from-scratch/
  */
 
 #include "kalman.h"
@@ -16,12 +20,12 @@ void initKalmanFilter(Kalman_t *kf) {
   kf->angle = 0.0f;
   kf->gyroBias = 0.0f;
   kf->P[0][0] = 0;
-  kf->P[0][1] = 99999.9f;
+  kf->P[0][1] = 0;
   kf->P[1][0] = 0;
-  kf->P[1][1] = 99999.9f;
+  kf->P[1][1] = 0;
   kf->Q_angle = 0.001f;
   kf->Q_gyroBias = 0.003f;
-  kf->R_measure = 0.03f;
+  kf->R_measure = 0.5f;
 }
 
 float updateKalmanFilter(Kalman_t *kf, vec3 *accel, vec3 *gyro, float *dt) {
@@ -34,7 +38,7 @@ float updateKalmanFilter(Kalman_t *kf, vec3 *accel, vec3 *gyro, float *dt) {
   kf->P[1][0] -= *dt * kf->P[1][1];
   kf->P[1][1] += *dt * kf->Q_gyroBias;
 
-  float y = atan2(accel->y, accel->z) * 180.0 / M_PI - kf->angle;
+  float y = atan2(accel->y, accel->z) * (180.0 / M_PI) - kf->angle;
 
   float S = kf->P[0][0] + kf->R_measure;
 
