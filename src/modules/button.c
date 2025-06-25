@@ -20,7 +20,6 @@ static volatile unsigned long lastPressed = 0;
 void initButtons() {
   PCMSK0 |= (1 << PCINT2); // Enable PCINT2 (D10 button)
   PCICR |= (1 << PCIE0);   // Enable PCIE0 interrupts
-  sei();                   // enable interrupts
 }
 
 ISR(PCINT0_vect) {
