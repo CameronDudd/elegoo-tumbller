@@ -22,6 +22,4 @@ static void _runAllTests(void) {
   RUN_TEST_GROUP(buttonTests);
 }
 
-int main(int argc, const char *argv[]) {
-  return UnityMain(argc, argv, _runAllTests);
-}
+int main(int argc, const char *argv[]) { return UnityMain(argc, argv, _runAllTests); }
