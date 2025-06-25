@@ -6,6 +6,7 @@
 #include <avr/interrupt.h>
 
 #include "balance.h"
+#include "button.h"
 #include "kalman.h"
 #include "led.h"
 #include "motor.h"
@@ -16,6 +17,22 @@
 
 #define MIN(A, B) ((A < B) ? A : B)
 
+PIDCtx pitchPIDCtx = {
+    .KP            = 20.0,
+    .KI            = 0.05,
+    .KD            = 0.5,
+    .integralError = 0.0,
+    .previousError = 0.0,
+};
+
+PIDCtx speedPIDCtx = {
+    .KP            = 0.0,
+    .KI            = 0.0,
+    .KD            = 0.0,
+    .integralError = 0.0,
+    .previousError = 0.0,
+};
+
 static void setup() {
   usartInit();
   uartPrint("+ usart\r\n");
@@ -23,8 +40,12 @@ static void setup() {
   initLED();
   uartPrint("+ led\r\n");
 
-  initTimers();
+  // initTimers();
   uartPrint("+ timers\r\n");
+
+  // Setup motor encoders
+  initEncoders();
+  uartPrint("+ encoders\r\n");
 
   // Setup motors
   initPWM();
@@ -34,9 +55,8 @@ static void setup() {
   enableMotors();
   uartPrint("+ motors enabled\r\n");
 
-  // Setup timed measurements
-  initEncoders();
-  uartPrint("+ encoders\r\n");
+  // Setup buttons
+  initButtons();
 
   // Setup mpu6050
   initMPU6050();
@@ -57,13 +77,14 @@ int main() {
   Kalman_t kf;
   initKalmanFilter(&kf);
 
-  float balancingPower = 0.0f;
-  float desire         = 0.0f;
+  float pitchPower   = 0.0f;
+  float desiredPitch = 0.0f;
   vec3 accel, gyro;
 
   static unsigned long lastMillis = 0;
   while (1) {
-    float dt   = (millis - lastMillis) / 1000.0f;
+    float dt = (millis - lastMillis) / 1000.0f;
+    if (dt <= 0 || dt > 0.2f) dt = 0.01f;
     lastMillis = millis;
     if (dt <= 0) {
       dt = 0.001;
@@ -72,25 +93,39 @@ int main() {
     readGyrometer(&gyro);
     readAccelerometer(&accel);
     float pitch      = updateKalmanFilter(&kf, &accel, &gyro, &dt);
-    float speed      = (rightWheelPulses + leftWheelPulses) / 2.0 * dt;
+    float speed      = ((rightWheelPulses + leftWheelPulses) / 2.0) / dt;
     leftWheelPulses  = 0;
     rightWheelPulses = 0;
-    float d          = (0.5 * pitch) + (0.5 * speed);
     uartPrintf("speed=%f\r\n", speed);
-    balancingPower = pitchPID(&d, &desire, &dt);
 
-    if (accel.z < 0.01) {
-      balancingPower = 0;
-    } else if (balancingPower < 0) {
-      balancingPower *= -1.0;
-      forward();
+    // 1. Outer loop: control speed -> get desired pitch
+    desiredPitch = outputFromPID(&speedPIDCtx, speed, 0.0f, dt);
+
+    // Clamp to prevent over-correction
+    if (desiredPitch > 10.0f) desiredPitch = 10.0f;
+    if (desiredPitch < -10.0f) desiredPitch = -10.0f;
+
+    // 2. Inner loop: control pitch -> get motor power
+    pitchPower = outputFromPID(&pitchPIDCtx, pitch, desiredPitch, dt);
+
+    // 3. Motor control logic
+    if (accel.z < 0.01f) {
+      pitchPower = 0;
+      setSpeed(0);
+      stop();
     } else {
-      reverse();
+      if (pitchPower < 0) {
+        pitchPower *= -1.0f;
+        forward();
+      } else {
+        reverse();
+      }
     }
 
-    balancingPower *= 2.83333333333f;
-    balancingPower = MIN(balancingPower, 255);
-    setSpeed(balancingPower);
+    if (pitchPower > 255.0f) pitchPower = 255.0f;
+    if (pitchPower < 0.0f) pitchPower = 0.0f;
+
+    setSpeed(pitchPower);
   }
 
   return 0;
