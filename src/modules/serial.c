@@ -4,13 +4,12 @@
  */
 
 #include "serial.h"
-#include "constants.h"
-#include "state.h"
-#include "timer.h"
 
 #include <stdarg.h>
 #include <stdio.h>
-#include <stdlib.h>
+
+#include "constants.h"
+#include "timer.h"
 
 #ifdef UNIT_TEST
 #include "mock_avr_delay.h"
@@ -23,13 +22,13 @@
 
 #define RX_BUFF_SIZE 500
 volatile unsigned char uartRxBuff[RX_BUFF_SIZE] = {'\0'};
-volatile unsigned char *r = uartRxBuff; // reading from the command buffer
-volatile unsigned char *p = uartRxBuff; // writing to the command buffer
+volatile unsigned char *r                       = uartRxBuff;  // reading from the command buffer
+volatile unsigned char *p                       = uartRxBuff;  // writing to the command buffer
 
 // As outlined by the documentation
 void usartInit() {
   // reset
-  UBRR0 = 0;
+  UBRR0  = 0;
   UCSR0A = 0;
   UCSR0B = 0;
   UCSR0C = 0;
@@ -45,7 +44,7 @@ void usartInit() {
   // UPMn1:0 bits enable and set the type of parity bit
   // USBSn bit selects between one or two stop bits blank for 1 stop bit
   // Set frame format: 8data, 1stop bit -> set by bluetooth module
-  UCSR0C = (1 << UCSZ01) | (1 << UCSZ00); // 8 bits, no parity, 1 stop bit
+  UCSR0C = (1 << UCSZ01) | (1 << UCSZ00);  // 8 bits, no parity, 1 stop bit
 
   UBRR0 = UBRR_FROM_BAUD;
 }
@@ -56,9 +55,9 @@ void usartDisableCapture() { UCSR0B &= ~(1 << RXCIE0); }
 
 // As outlined by the documentation
 static void _uartTransmit(unsigned char data) {
-  while (!(UCSR0A & (1 << UDRE0))) { // wait until UDR0 ready to accept data
+  while (!(UCSR0A & (1 << UDRE0))) {  // wait until UDR0 ready to accept data
   }
-  UDR0 = data; // put data into the buffer
+  UDR0 = data;  // put data into the buffer
 }
 
 unsigned int serialAvailable() { return (UCSR0A & (1 << RXC0)) ? 1 : 0; }
@@ -84,15 +83,15 @@ ATStatusFlag uartReceiveATAttr(const char *attr, char *buff, int buffSize) {
     if ((current - buff) > (buffSize - 1)) {
       s |= STATUS_OVERFLOW;
     }
-    if (UCSR0A & (1 << RXC0)) { // Character received
-      c = UDR0;                 // Read character
-      *current++ = c;           // Put character into buffer
-      if (c == '\n') {          // Stop signal
+    if (UCSR0A & (1 << RXC0)) {  // Character received
+      c          = UDR0;         // Read character
+      *current++ = c;            // Put character into buffer
+      if (c == '\n') {           // Stop signal
         s |= STATUS_OK;
       }
     }
   }
-  *current = '\0'; // Null terminated
+  *current = '\0';  // Null terminated
   return s;
 }
 
@@ -102,21 +101,21 @@ void uartReceiveATResponse(char *buff, int buffSize) {
   unsigned long startTs = millis;
   sei();
   char *current = buff;
-  while (((millis - startTs) < 1000) &&      // Timeout
-         ((current - buff) < (buffSize - 1)) // Overflow
-  ) { // TODO (cameron): Check for termination bytes ie \r\n, \r\nOK\r\n etc
-    if (UCSR0A & (1 << RXC0)) { // Character received
-      *current++ = UDR0;        // Read character
+  while (((millis - startTs) < 1000) &&       // Timeout
+         ((current - buff) < (buffSize - 1))  // Overflow
+  ) {                                         // TODO (cameron): Check for termination bytes ie \r\n, \r\nOK\r\n etc
+    if (UCSR0A & (1 << RXC0)) {               // Character received
+      *current++ = UDR0;                      // Read character
     }
   }
-  *current = '\0'; // Null terminated
+  *current = '\0';  // Null terminated
 }
 
 void uartPrint(const char *str) {
   while (*str != '\0') {
     _uartTransmit(*str++);
   }
-  _delay_ms(10); // Add a small delay after sending data
+  _delay_ms(10);  // Add a small delay after sending data
 }
 
 void uartPrintf(const char *format, ...) {
@@ -130,29 +129,18 @@ void uartPrintf(const char *format, ...) {
 
 void getCommand() {
   char buff[100] = {'\0'};
-  char *b = buff;
+  char *b        = buff;
   while ((r < p) && (*r != '\0')) {
     *b++ = *r++;
   }
   *b++ = '\0';
-
-  if ((buff[0] == 'K') && (buff[1] == 'P')) {
-    pitchPIDConstants.KP = atof(buff + 2);
-    uartPrintf("Updated KP to %f\r\n", pitchPIDConstants.KP);
-  } else if ((buff[0] == 'K') && (buff[1] == 'I')) {
-    pitchPIDConstants.KI = atof(buff + 2);
-    uartPrintf("Updated KI to %f\r\n", pitchPIDConstants.KI);
-  } else if ((buff[0] == 'K') && (buff[1] == 'D')) {
-    pitchPIDConstants.KD = atof(buff + 2);
-    uartPrintf("Updated KD to %f\r\n", pitchPIDConstants.KD);
-  }
 }
 
-ISR(USART_RX_vect) { // if interrupt is enabled write into the buffer
-  cli();             // disable interrupts
+ISR(USART_RX_vect) {  // if interrupt is enabled write into the buffer
+  cli();              // disable interrupts
   if ((p - uartRxBuff) >= RX_BUFF_SIZE - 1) {
-    p = uartRxBuff; // round robin
+    p = uartRxBuff;  // round robin
   }
   *p++ = UDR0;
-  sei(); // enable interrupts
+  sei();  // enable interrupts
 }
