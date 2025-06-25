@@ -5,6 +5,7 @@
 
 #include "button.h"
 #include "mock_avr_io.h"
+#include "state.h"
 #include "timer.h"
 #include "unity.h"
 #include "unity_fixture.h"
@@ -14,11 +15,11 @@ extern void PCINT0_vect();
 TEST_GROUP(buttonTests);
 
 TEST_SETUP(buttonTests) {
-  millis = 501;
-  interruptsEnabled = 0;
+  millis                 = 501;
+  interruptsEnabled      = 0;
   numInterruptsTriggered = 0;
-  PCMSK0 = 0;
-  PCICR = 0;
+  PCMSK0                 = 0;
+  PCICR                  = 0;
 }
 
 TEST_TEAR_DOWN(buttonTests) {}
@@ -27,7 +28,7 @@ TEST(buttonTests, initButtons) {
   initButtons();
   TEST_ASSERT_EQUAL_UINT8(0b00000100, PCMSK0);
   TEST_ASSERT_EQUAL_UINT8(0b00000001, PCICR);
-  TEST_ASSERT_TRUE(interruptsEnabled);
+  TEST_ASSERT_FALSE(interruptsEnabled);
 }
 
 TEST(buttonTests, buttonPressUpdateState) {
