@@ -5,4 +5,10 @@
 
 #include "state.h"
 
-State state = STDBY;
+State state = BALANCE;
+
+PIDConstants pitchPIDConstants = {
+    .KP = 5.0,
+    .KI = 0.0,
+    .KD = 0.0,
+};
