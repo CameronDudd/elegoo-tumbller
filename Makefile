@@ -60,7 +60,7 @@ $(TARGET_ELF): $(OBJ)
 # == Object Compilation Rules ==
 $(BUILDDIR)/%.o: $(SRCDIR)/%.c
 	@mkdir -p $(dir $@)
-	$(AVR_CC) -mmcu=$(MCU) $(CFLAGS) $(INCLUDES) -DF_CPU=$(F_CPU) -c $< -o $@
+	$(AVR_CC) -mmcu=$(MCU) $(CFLAGS) $(INCLUDES) -DF_CPU=$(F_CPU) -c $< -o $@ -lm
 
 # == Hex Generation ==
 $(TARGET_HEX): $(TARGET_ELF)
