@@ -11,11 +11,13 @@
 extern volatile unsigned char *r;
 
 void usartInit();
-void uartPrint(const char *str);
-void uartPrintf(const char *format, ...);
+void usartEnableCapture();
+void usartDisableCapture();
 unsigned int serialAvailable();
 unsigned char uartReceive();
 ATStatusFlag uartReceiveATAttr(const char *attr, char *buff, int buffSize);
 void uartReceiveATResponse(char *buff, int buffSize);
+void uartPrint(const char *str);
+void uartPrintf(const char *format, ...);
 
 #endif  // SERIAL_H

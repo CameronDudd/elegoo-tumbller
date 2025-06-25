@@ -5,10 +5,12 @@
 
 #include "serial.h"
 #include "constants.h"
+#include "state.h"
 #include "timer.h"
 
 #include <stdarg.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #ifdef UNIT_TEST
 #include "mock_avr_delay.h"
@@ -19,7 +21,7 @@
 #include <util/delay.h>
 #endif
 
-#define RX_BUFF_SIZE 15 // TODO (cameron): implement?
+#define RX_BUFF_SIZE 500
 volatile unsigned char uartRxBuff[RX_BUFF_SIZE] = {'\0'};
 volatile unsigned char *r = uartRxBuff; // reading from the command buffer
 volatile unsigned char *p = uartRxBuff; // writing to the command buffer
@@ -36,8 +38,8 @@ void usartInit() {
   UBRR0L = (unsigned char)UBRR_FROM_BAUD;
   UBRR0H = (unsigned char)(UBRR_FROM_BAUD >> 8);
 
-  // Enable receiver and transmitter and // receiver interrupt
-  UCSR0B = (1 << RXEN0) | (1 << TXEN0); //  | (1 << RXCIE0);
+  // Enable receiver and transmitter
+  UCSR0B = (1 << RXEN0) | (1 << TXEN0);
 
   // UCSZn2:0 bits select number of data bits in the frame
   // UPMn1:0 bits enable and set the type of parity bit
@@ -47,6 +49,10 @@ void usartInit() {
 
   UBRR0 = UBRR_FROM_BAUD;
 }
+
+void usartEnableCapture() { UCSR0B |= (1 << RXCIE0); }
+
+void usartDisableCapture() { UCSR0B &= ~(1 << RXCIE0); }
 
 // As outlined by the documentation
 static void _uartTransmit(unsigned char data) {
@@ -120,6 +126,26 @@ void uartPrintf(const char *format, ...) {
   vsprintf(out, format, args);
   va_end(args);
   uartPrint(out);
+}
+
+void getCommand() {
+  char buff[100] = {'\0'};
+  char *b = buff;
+  while ((r < p) && (*r != '\0')) {
+    *b++ = *r++;
+  }
+  *b++ = '\0';
+
+  if ((buff[0] == 'K') && (buff[1] == 'P')) {
+    pitchPIDConstants.KP = atof(buff + 2);
+    uartPrintf("Updated KP to %f\r\n", pitchPIDConstants.KP);
+  } else if ((buff[0] == 'K') && (buff[1] == 'I')) {
+    pitchPIDConstants.KI = atof(buff + 2);
+    uartPrintf("Updated KI to %f\r\n", pitchPIDConstants.KI);
+  } else if ((buff[0] == 'K') && (buff[1] == 'D')) {
+    pitchPIDConstants.KD = atof(buff + 2);
+    uartPrintf("Updated KD to %f\r\n", pitchPIDConstants.KD);
+  }
 }
 
 ISR(USART_RX_vect) { // if interrupt is enabled write into the buffer
