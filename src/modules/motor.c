@@ -58,7 +58,6 @@ void initEncoders() {
       (1 << ISC00); // Any (rising/falling) edge trigger for INT0 (left wheel)
   PCMSK2 |= (1 << PCINT20); // Enable PCINT22 (right wheel encoder)
   PCICR |= (1 << PCIE2);    // Enable PCIE2 interrupts
-  sei();                    // global enable interrupts
 }
 
 void enableMotors() {
