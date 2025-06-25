@@ -4,6 +4,7 @@
  */
 
 #include "led.h"
+
 #include "color.h"
 
 #ifdef UNIT_TEST
@@ -24,8 +25,8 @@ void initLED() {
   PORTB = 0;
   PORTD = 0;
 
-  DDRB |= (1 << PB5); // Set PB5 as output (for on board LED)
-  DDRD |= (1 << PD3); // Set PD3 as output (for bit banging ws2812b module)
+  DDRB |= (1 << PB5);  // Set PB5 as output (for on board LED)
+  DDRD |= (1 << PD3);  // Set PD3 as output (for bit banging ws2812b module)
 }
 
 void toggleOnBoardLED() { PORTB ^= (1 << PB5); }
@@ -64,24 +65,22 @@ void toggleOnBoardLED() { PORTB ^= (1 << PB5); }
  */
 
 #define TSMALL __asm__ __volatile__("nop\nnop\nnop\n")
-#define TLARGE                                                                 \
-  __asm__ __volatile__(                                                        \
-      "nop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\n")
+#define TLARGE __asm__ __volatile__("nop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\n")
 
 static inline void _sendZero(void) __attribute__((always_inline));
 static inline void _sendZero(void) {
-  PORTD |= (1 << PD3);  // PULL HIGH
-  TSMALL;               // T0H
-  PORTD &= ~(1 << PD3); // PULL LOW
-  TLARGE;               // TOL
+  PORTD |= (1 << PD3);   // PULL HIGH
+  TSMALL;                // T0H
+  PORTD &= ~(1 << PD3);  // PULL LOW
+  TLARGE;                // TOL
 }
 
 static inline void _sendOne(void) __attribute__((always_inline));
 static inline void _sendOne(void) {
-  PORTD |= (1 << PD3);  // PULL HIGH
-  TLARGE;               // T1H
-  PORTD &= ~(1 << PD3); // PULL LOW
-  TSMALL;               // T1L
+  PORTD |= (1 << PD3);   // PULL HIGH
+  TLARGE;                // T1H
+  PORTD &= ~(1 << PD3);  // PULL LOW
+  TSMALL;                // T1L
 }
 
 static inline void _sendByte(uint8_t byte) __attribute__((always_inline));
@@ -115,8 +114,7 @@ void sendLEDColors(const Color8 *colors, const size_t numColors) {
   sendColorLEDReset();
 }
 
-void flashLEDColors(const Color8 *colors, const size_t numColors,
-                    uint8_t numTimes) {
+void flashLEDColors(const Color8 *colors, const size_t numColors, uint8_t numTimes) {
   Color8 colorsOff[4] = {
       COLOR_OFF,
       COLOR_OFF,
