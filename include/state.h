@@ -13,13 +13,6 @@ typedef enum {
   BALANCE = 1,
 } State;
 
-typedef struct {
-  float KP;
-  float KI;
-  float KD;
-} PIDConstants;
-
 extern State state;
-extern PIDConstants pitchPIDConstants;
 
 #endif  // STATE_H
