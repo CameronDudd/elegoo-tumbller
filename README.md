@@ -1,8 +1,11 @@
-TODO (cameron): README
+## Elegoo Tumbller Balancing Robot Project
 
-git submodule update --init
-bear -- make all
+## Statistics
+Language|files|blank|comment|code
+:-------|-------:|-------:|-------:|-------:
+C|13|130|196|522
+C/C++ Header|15|75|104|209
+--------|--------|--------|--------|--------
+SUM:|28|205|300|731
 
-The Bluetooth module AT command mode only works when battery powered and the internal devices buffer is empty ie uart prints are dangerous and can corrupt the
-BT device buffer
-^^ It turns out that there just needs to be a small delay added after the uart print statements and then the Bluetooth module seems to respond to AT commands
+[cloc](https://github.com/AlDanial/cloc)
