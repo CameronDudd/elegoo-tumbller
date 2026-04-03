@@ -1,75 +1,71 @@
-# == Toolchain ==
-CC      = gcc
-AVR_CC  = avr-gcc
+MCU   		= atmega328p
+F_CPU 		= 16000000UL
+PORT  		= /dev/ttyUSB0
+BAUD  		= 115200
+PLATFORM 	= arduino
+
+CC  	= avr-gcc
 OBJCOPY = avr-objcopy
 AVRDUDE = avrdude
 
-# == Flags ==
-CFLAGS  = -Wall -Wextra -O2 -std=c99 -DUNITY_OUTPUT_COLOR -DUNITY_INCLUDE_DOUBLE -DUNITY_DOUBLE_PRECISION=1e-12f
-LDFLAGS = -Wl,-u,vfprintf -lprintf_flt -lm
+MAJOR	:= 0
+MINOR	:= 0
+PATCH	:= 1
+VERSION	:= v$(MAJOR).$(MINOR).$(PATCH)
 
-# == MCU Config ==
-MCU   = atmega328p
-F_CPU = 16000000UL
-PORT  = /dev/ttyUSB0
-BAUD  = 115200
+BUILD 		?= release
+TARGET_BASE 	:= main
 
-# == Directories ==
-SRCDIR    = src
-MODULEDIR = $(SRCDIR)/modules
-INCDIR    = include
-BUILDDIR  = build
-BACKUPDIR = backup
-LIBDIR    = lib
-MOCKDIR   = mocks
-UNITYDIR  = $(LIBDIR)/unity
-UNITYFIXTUREDIR = $(UNITYDIR)/extras/fixture
-UNITYMEMORYDIR  = $(UNITYDIR)/extras/memory
+ELF		:= $(TARGET_BASE)_$(VERSION)_$(BUILD).elf
+TARGET		:= $(TARGET_BASE)_$(VERSION)_$(BUILD).hex
 
-# == Target Definitions ==
-TARGET      = main
-TARGET_ELF  = $(BUILDDIR)/$(TARGET).elf
-TARGET_HEX  = $(BUILDDIR)/$(TARGET).hex
+BUILD_DIR	:= build
+INCLUDE_DIR	:= include
 
-# == Sources ==
-SRC        = $(wildcard $(SRCDIR)/*.c)
-SRCMODULES = $(wildcard $(MODULEDIR)/*.c)
+SRC	:= $(wildcard src/*.c)
+OBJ	:= $(SRC:src/%.c=$(BUILD_DIR)/%.o)
 
-# == Object files ==
-OBJ  = $(patsubst %.c, $(BUILDDIR)/%.o, $(subst $(SRCDIR)/,,$(SRC)))
-OBJ += $(patsubst %.c, $(BUILDDIR)/%.o, $(subst $(SRCDIR)/,,$(SRCMODULES)))
+C_FLAGS_COMMON	:= -Wall -Wextra -std=c11 -I$(INCLUDE_DIR)
+LD_FLAGS	:= -Wl,-u,vfprintf -lprintf_flt -lm
 
-# == Includes ==
-INCLUDES     = -I$(INCDIR) -I/usr/avr/include
+ifeq ($(BUILD),release)
+	CFLAGS := $(C_FLAGS_COMMON) -O2 -DNDEBUG
+else
+	CFLAGS := $(C_FLAGS_COMMON) -O0 -g3 -DDEBUG
+endif
 
-# == Targets ==
-all: $(BUILDDIR) $(TARGET_ELF) $(TARGET_HEX)
+all: $(TARGET)
 
-$(TARGET_ELF): $(OBJ)
-	$(AVR_CC) -mmcu=$(MCU) $(CFLAGS) $(OBJ) -o $@ $(LDFLAGS)
+$(ELF): $(OBJ)
+	$(CC) -mmcu=$(MCU) $(CFLAGS) $^ -o $@ $(LD_FLAGS)
 
-# == Object Compilation Rules ==
-$(BUILDDIR)/%.o: $(SRCDIR)/%.c
-	@mkdir -p $(dir $@)
-	$(AVR_CC) -mmcu=$(MCU) $(CFLAGS) $(INCLUDES) -DF_CPU=$(F_CPU) -c $< -o $@ -lm
-
-# == Hex Generation ==
-$(TARGET_HEX): $(TARGET_ELF)
+$(TARGET): $(ELF)
 	$(OBJCOPY) -O ihex -R .eeprom $< $@
 
-# == Directory Setup ==
-$(BUILDDIR):
-	mkdir -p $(BUILDDIR)
+$(BUILD_DIR)/%.o: src/%.c | $(BUILD_DIR)
+	$(CC) -mmcu=$(MCU) $(CFLAGS) -DF_CPU=$(F_CPU) -c $< -o $@
 
-# == Flashing ==
-flash: $(TARGET_HEX)
-	$(AVRDUDE) -c arduino -p $(MCU) -P $(PORT) -b $(BAUD) -U flash:w:$<
+$(BUILD_DIR):
+	mkdir -p $@
+
+clean:
+	rm -rf $(BUILD_DIR) $(ELF) $(TARGET)
+
+cloc:
+	cloc --md src include
+
+format:
+	clang-format -i $(SRC)
+
+info:
+	@echo "Target: $(TARGET)"
+	@echo "Compiler: $(CC)"
+	@echo "Build type: $(BUILD)"
+
+flash: $(TARGET)
+	$(AVRDUDE) -c $(PLATFORM) -p $(MCU) -P $(PORT) -b $(BAUD) -U flash:w:$<
 
 flash-original:
-	$(AVRDUDE) -c arduino -p $(MCU) -P $(PORT) -b $(BAUD) -U flash:w:$(BACKUPDIR)/original_backup.hex
+	$(AVRDUDE) -c $(PLATFORM) -p $(MCU) -P $(PORT) -b $(BAUD) -U flash:w:$(BACKUP_DIR)/original_backup.hex
 
-# == Clean ==
-clean:
-	rm -rf $(BUILDDIR) $(TARGET_ELF) $(TARGET_HEX) $(TARGET_TEST)
-
-.PHONY: all flash flash-original clean
+.PHONY: all clean cloc format info flash flash-original
