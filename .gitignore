@@ -1,6 +1,9 @@
-build
-docs
+build/
+docs/
 compile_commands.json
 
 .cache/
 documentation/
+
+*.elf
+*.hex
