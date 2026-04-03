@@ -12,14 +12,16 @@
 #include <util/delay.h>
 
 #define UBRR_FROM_BAUD (uint16_t)103
-#define RX_BUFF_SIZE 500
-
-volatile unsigned char uartRxBuff[RX_BUFF_SIZE] = {'\0'};
-volatile unsigned char* r                       = uartRxBuff;  // reading from the command buffer
-volatile unsigned char* p                       = uartRxBuff;  // writing to the command buffer
 
 // As outlined by the documentation
-void usartInit() {
+static void _uartTransmit(unsigned char data) {
+  while (!(UCSR0A & (1 << UDRE0))) {  // wait until UDR0 ready to accept data
+  }
+  UDR0 = data;  // put data into the buffer
+}
+
+// As outlined by the documentation
+void initUsart(void) {
   // reset
   UBRR0  = 0;
   UCSR0A = 0;
@@ -42,20 +44,7 @@ void usartInit() {
   UBRR0 = UBRR_FROM_BAUD;
 }
 
-void usartEnableCapture() { UCSR0B |= (1 << RXCIE0); }
-
-void usartDisableCapture() { UCSR0B &= ~(1 << RXCIE0); }
-
-// As outlined by the documentation
-static void _uartTransmit(unsigned char data) {
-  while (!(UCSR0A & (1 << UDRE0))) {  // wait until UDR0 ready to accept data
-  }
-  UDR0 = data;  // put data into the buffer
-}
-
-unsigned int serialAvailable() { return (UCSR0A & (1 << RXC0)) ? 1 : 0; }
-
-unsigned char uartReceive() {
+unsigned char uartReceive(void) {
   while (!(UCSR0A & (1 << RXC0))) {
   }
   return UDR0;
@@ -74,22 +63,4 @@ void uartPrintf(const char* format, ...) {
   vsprintf(out, format, args);
   va_end(args);
   uartPrint(out);
-}
-
-void getCommand() {
-  char buff[100] = {'\0'};
-  char* b        = buff;
-  while ((r < p) && (*r != '\0')) {
-    *b++ = *r++;
-  }
-  *b++ = '\0';
-}
-
-ISR(USART_RX_vect) {  // if interrupt is enabled write into the buffer
-  cli();              // disable interrupts
-  if ((p - uartRxBuff) >= RX_BUFF_SIZE - 1) {
-    p = uartRxBuff;  // round robin
-  }
-  *p++ = UDR0;
-  sei();  // enable interrupts
 }

@@ -8,11 +8,8 @@
 
 extern volatile unsigned char* r;
 
-void usartInit();
-void usartEnableCapture();
-void usartDisableCapture();
-unsigned int serialAvailable();
-unsigned char uartReceive();
+void initUsart(void);
+unsigned char uartReceive(void);
 void uartPrint(const char* str);
 void uartPrintf(const char* format, ...);
 
