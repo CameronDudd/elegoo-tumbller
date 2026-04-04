@@ -29,7 +29,7 @@ void pwmInit(void) {
 void pwmSet(uint8_t channel, uint8_t duty) {
   switch (channel) {
     case L_MOTOR_PWM_CHANNEL:
-      OCR0B = duty;
+      OCR0A = duty;
       break;
     case R_MOTOR_PWM_CHANNEL:
       OCR0B = duty;
