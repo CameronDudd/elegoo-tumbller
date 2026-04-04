@@ -32,7 +32,7 @@ static uint8_t _percentToDuty(uint8_t percent) {
 void initMotors(void) {
   // Set outputs
   DDRB |= (1 << MOTOR_STBY_PIN) | (1 << L_MOTOR_DIR_PIN);
-  DDRD |= (1 << R_MOTOR_DIR_PIN);
+  DDRD |= (1 << L_MOTOR_PWM_PIN) | (1 << R_MOTOR_PWM_PIN) | (1 << R_MOTOR_DIR_PIN);
 
   // Init to LOW
   MOTOR_STBY_PORT &= ~(1 << MOTOR_STBY_PIN);
