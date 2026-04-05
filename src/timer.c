@@ -8,7 +8,7 @@
 
 volatile uint32_t millis_count = 0;
 
-void initTimers(void) {
+void timersInit(void) {
   /*
    * OCR1A Output Compare Register 1A
    * OCR1B Output Compare Register 1B

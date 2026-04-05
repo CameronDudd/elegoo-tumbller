@@ -8,7 +8,7 @@
 
 #include <stdint.h>
 
-void initTimers(void);
+void timersInit(void);
 uint32_t getMillis(void);
 
 #endif  // TIMER_H
