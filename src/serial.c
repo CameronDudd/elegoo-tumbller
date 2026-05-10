@@ -42,11 +42,15 @@ void initUsart(void) {
   UCSR0C = (1 << UCSZ01) | (1 << UCSZ00);  // 8 bits, no parity, 1 stop bit
 }
 
+bool uartAvailable(void) { return (UCSR0A & (1 << RXC0)) ? true : false; }
+
 unsigned char uartReceive(void) {
   while (!(UCSR0A & (1 << RXC0))) {
   }
   return UDR0;
 }
+
+void uartSendChar(char c) { _uartTransmit(c); }
 
 void uartPrint(const char* str) {
   while (*str != '\0') {

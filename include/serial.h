@@ -6,10 +6,12 @@
 #ifndef SERIAL_H
 #define SERIAL_H
 
-extern volatile unsigned char* r;
+#include <stdbool.h>
 
 void initUsart(void);
+bool uartAvailable(void);
 unsigned char uartReceive(void);
+void uartSendChar(char c);
 void uartPrint(const char* str);
 void uartPrintf(const char* format, ...);
 
