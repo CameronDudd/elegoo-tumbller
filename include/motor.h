@@ -9,14 +9,17 @@
 #include <avr/io.h>
 #include <stdint.h>
 
-extern volatile unsigned long leftWheelPulses;
-extern volatile unsigned long rightWheelPulses;
+extern volatile int32_t leftWheelPulses;
+extern volatile int32_t rightWheelPulses;
 
 void initMotors(void);
 void initEncoders(void);
+void resetEncoders(void);
 void enableMotors(void);
 void disableMotors(void);
 void setMotorsPercent(int8_t percent);
 void setMotorStop(void);
+int32_t getLeftWheelPulses(void);
+int32_t getRightWheelPulses(void);
 
 #endif  // MOTOR_H

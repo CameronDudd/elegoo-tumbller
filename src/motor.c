@@ -7,12 +7,13 @@
 
 #include <avr/interrupt.h>
 #include <stdint.h>
+#include <util/atomic.h>
 
 #include "board.h"
 #include "pwm.h"
 
-volatile uint32_t leftWheelPulses  = 0;
-volatile uint32_t rightWheelPulses = 0;
+volatile int32_t leftWheelPulses  = 0;
+volatile int32_t rightWheelPulses = 0;
 
 static void _setMotorDirectionForward(void) {
   L_MOTOR_DIR_PORT &= ~(1 << L_MOTOR_DIR_PIN);
@@ -48,6 +49,13 @@ void initEncoders(void) {
   PCICR |= (1 << PCIE2);     // Enable PCIE2 interrupts
 }
 
+void resetEncoders(void) {
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+    leftWheelPulses  = 0;
+    rightWheelPulses = 0;
+  }
+}
+
 void enableMotors(void) { MOTOR_STBY_PORT |= (1 << MOTOR_STBY_PIN); }
 
 void disableMotors(void) {
@@ -68,6 +76,30 @@ void setMotorsPercent(int8_t percent) {
 
 void setMotorStop(void) { pwmStopAll(); }
 
-ISR(INT0_vect) { leftWheelPulses++; }
+int32_t getLeftWheelPulses(void) {
+  int32_t tmp;
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) { tmp = leftWheelPulses; }
+  return tmp;
+}
 
-ISR(PCINT2_vect) { rightWheelPulses++; }
+int32_t getRightWheelPulses(void) {
+  int32_t tmp;
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) { tmp = rightWheelPulses; }
+  return tmp;
+}
+
+ISR(INT0_vect) {
+  if ((L_MOTOR_DIR_PORT & (1 << L_MOTOR_DIR_PIN)) == 0) {
+    leftWheelPulses++;
+  } else {
+    leftWheelPulses--;
+  }
+}
+
+ISR(PCINT2_vect) {
+  if ((R_MOTOR_DIR_PORT & (1 << R_MOTOR_DIR_PIN)) == 0) {
+    rightWheelPulses++;
+  } else {
+    rightWheelPulses--;
+  }
+}
