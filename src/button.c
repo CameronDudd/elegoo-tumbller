@@ -12,12 +12,12 @@
 #include "timer.h"
 
 #define BUTTON_PIN PB2
-#define DEBOUNCE_STATE_MS 50
+#define DEBOUNCE_STATE_MS 100
 
 static volatile bool buttonWasPressed      = false;
 static volatile uint32_t lastInterruptTime = 0;
 
-void initButtons(void) {
+void buttonsInit(void) {
   DDRB &= ~(1 << BUTTON_PIN);  // Input
   PORTB |= (1 << BUTTON_PIN);  // Pull-up
 

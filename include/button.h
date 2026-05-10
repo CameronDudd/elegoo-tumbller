@@ -8,7 +8,7 @@
 
 #include <stdbool.h>
 
-void initButtons(void);
+void buttonsInit(void);
 bool readButtonPressed(void);
 
 #endif  // BUTTON_H
