@@ -14,6 +14,7 @@ typedef struct {
   float dt;
 } PIDController;
 
+void resetPIDController(PIDController* pid);
 void initPIDController(PIDController* pid, float p, float i, float d, float dt, float limit);
 float updatePIDController(PIDController* pid, float setPoint, float measuredValue);
 

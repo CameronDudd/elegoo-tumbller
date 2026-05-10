@@ -20,7 +20,7 @@ void initPIDController(PIDController* pid, float p, float i, float d, float dt, 
 }
 
 float updatePIDController(PIDController* pid, float setPoint, float measuredValue) {
-  float error = measuredValue - setPoint;
+  float error = setPoint - measuredValue;
   pid->integral += error * pid->dt;
 
   if (pid->integral > pid->limit) {
