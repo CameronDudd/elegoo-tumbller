@@ -1,5 +1,5 @@
 /*
- *   Copyright (c) 2024 Cameron Dudd
+ *   Copyright (c) 2026 Cameron Dudd
  *   All rights reserved.
  */
 
