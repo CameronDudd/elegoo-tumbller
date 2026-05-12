@@ -3,6 +3,8 @@ F_CPU 		= 16000000UL
 PORT  		= /dev/ttyUSB0
 BAUD  		= 115200
 PLATFORM 	= arduino
+BLE_MAC         = 48:87:2D:76:E3:65
+BLE_PORT	= /tmp/ttyBLE
 
 CC  	= avr-gcc
 OBJCOPY = avr-objcopy
@@ -33,6 +35,7 @@ ifeq ($(BUILD),release)
 else
 	CFLAGS := $(C_FLAGS_COMMON) -O0 -g3 -DDEBUG
 endif
+
 
 all: $(TARGET)
 
@@ -66,6 +69,14 @@ flash: $(TARGET)
 	$(AVRDUDE) -c $(PLATFORM) -p $(MCU) -P $(PORT) -b $(BAUD) -U flash:w:$<
 
 flash-original:
-	$(AVRDUDE) -c $(PLATFORM) -p $(MCU) -P $(PORT) -b $(BAUD) -U flash:w:$(BACKUP_DIR)/original_backup.hex
+	$(AVRDUDE) -c $(PLATFORM) -p $(MCU) -P $(PORT) -b $(BAUD) -U flash:w:backup/original_backup.hex
 
-.PHONY: all clean cloc format info flash flash-original
+ble-connect:
+	@echo "Starting BLE..."
+	ble-serial -d $(BLE_MAC)
+
+ble-send:
+	echo "$(MSG)" > $(BLE_PORT)
+
+
+.PHONY: all clean cloc format info flash flash-original ble-connect ble-send
