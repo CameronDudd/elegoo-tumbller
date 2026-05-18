@@ -10,7 +10,10 @@
 static float accelDivisor = 16384;  // 2G
 static float gyroDivisor  = 131;    // RANGE 250
 
-void mpu6050Init(void) { i2cWriteRegister(MPU6050_SLAVE_ADDR, MPU6050_PWR_MGMT_1, MPU6050_WAKE); }
+void mpu6050Init(void) {
+  i2cWriteRegister(MPU6050_SLAVE_ADDR, MPU6050_PWR_MGMT_1, MPU6050_WAKE);
+  i2cWriteRegister(MPU6050_SLAVE_ADDR, 0x1A, 0x03);
+}
 
 void configureAccelerometer(ACCEL_CONFIG config) {
   switch (config) {
