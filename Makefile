@@ -28,14 +28,13 @@ SRC	:= $(wildcard src/*.c)
 OBJ	:= $(SRC:src/%.c=$(BUILD_DIR)/%.o)
 
 C_FLAGS_COMMON	:= -Wall -Wextra -std=c11 -I$(INCLUDE_DIR)
-LD_FLAGS	:= -Wl,-u,vfprintf -lprintf_flt -lm
+LD_FLAGS	:= -Wl,-u,vfprintf -lprintf_flt -lm -lc
 
 ifeq ($(BUILD),release)
 	CFLAGS := $(C_FLAGS_COMMON) -O2 -DNDEBUG
 else
 	CFLAGS := $(C_FLAGS_COMMON) -O0 -g3 -DDEBUG
 endif
-
 
 all: $(TARGET)
 
